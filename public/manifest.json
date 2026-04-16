@@ -1,0 +1,21 @@
+{
+    "name": "RPG Forge: High Performance VTT",
+    "short_name": "RPG Forge",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#050505",
+    "theme_color": "#D4AF37",
+    "description": "A professional-grade, vanilla Virtual Tabletop for high-performance RPG gaming.",
+    "icons": [
+        {
+            "src": "https://via.placeholder.com/192x192/D4AF37/050505?text=RPG",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://via.placeholder.com/512x512/D4AF37/050505?text=RPG",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

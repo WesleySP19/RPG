@@ -1,0 +1,17 @@
+{
+  "name": "Grimoire Vault - RPG VTT",
+  "short_name": "GrimoireV",
+  "description": "Seu cofre de aventuras D&D 5e portátil e seguro.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1A1A1A",
+  "theme_color": "#5E1F2D",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3592/3592398.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
