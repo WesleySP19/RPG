@@ -1,7 +1,6 @@
-const STORAGE_KEY = 'GRIMOIRE_VAULT_DATA_ENCRYPTED';
 const SALT_DB = 'DND_GRIMOIRE_2026_STORAGE_SALT';
 const DB_NAME = 'GrimoireVaultDB';
-const STORE_NAME = 'vault_store';
+const LEGACY_STORAGE_KEY = 'GRIMOIRE_VAULT_DATA_ENCRYPTED';
 
 export const Storage = {
     data: {
@@ -13,37 +12,62 @@ export const Storage = {
     db: null,
 
     /**
-     * Core IndexedDB Wrapper (Vanilla)
+     * Core IndexedDB Wrapper (Fragmented Version)
      */
     async openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, 1);
+            const request = indexedDB.open(DB_NAME, 2); // Version 2
             request.onerror = () => reject('Erro ao abrir IndexedDB');
             request.onsuccess = () => resolve(request.result);
             request.onupgradeneeded = (e) => {
                 const db = e.target.result;
-                if (!db.objectStoreNames.contains(STORE_NAME)) {
-                    db.createObjectStore(STORE_NAME);
-                }
+                // Create stores if they don't exist
+                if (!db.objectStoreNames.contains('users')) db.createObjectStore('users');
+                if (!db.objectStoreNames.contains('sessions')) db.createObjectStore('sessions');
+                if (!db.objectStoreNames.contains('characters')) db.createObjectStore('characters');
+                if (!db.objectStoreNames.contains('tavern')) db.createObjectStore('tavern');
+                if (!db.objectStoreNames.contains('vault_store')) db.createObjectStore('vault_store'); // Keep for migration
             };
         });
     },
 
-    async dbGet(key) {
+    async dbGet(storeName, key) {
         return new Promise((resolve) => {
-            const transaction = this.db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
+            const transaction = this.db.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
             const request = store.get(key);
             request.onsuccess = () => resolve(request.result);
+            request.onerror = () => resolve(null);
         });
     },
 
-    async dbPut(key, val) {
-        return new Promise((resolve) => {
-            const transaction = this.db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
+    async dbPut(storeName, key, val) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([storeName], 'readwrite');
+            const store = transaction.objectStore(storeName);
             const request = store.put(val, key);
             request.onsuccess = () => resolve();
+            request.onerror = () => reject();
+        });
+    },
+
+    async dbGetAll(storeName) {
+        return new Promise((resolve) => {
+            const transaction = this.db.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
+            const request = store.getAll();
+            const keysRequest = store.getAllKeys();
+            
+            // Note: In some browsers, we need to map keys to values manualy if not using keyPath
+            request.onsuccess = () => {
+                keysRequest.onsuccess = () => {
+                    const result = {};
+                    request.result.forEach((val, i) => {
+                        result[keysRequest.result[i]] = val;
+                    });
+                    resolve(result);
+                };
+            };
         });
     },
 
@@ -74,47 +98,81 @@ export const Storage = {
     async init(playerKey = null) {
         this.db = await this.openDB();
         
-        if (!playerKey) {
-            const savedKey = localStorage.getItem('ACTIVE_PLAYER_KEY');
-            if (savedKey) await this.deriveKey(savedKey);
-            else return;
+        const activeKey = playerKey || localStorage.getItem('ACTIVE_PLAYER_KEY');
+        if (activeKey) {
+            await this.deriveKey(activeKey);
         } else {
-            await this.deriveKey(playerKey);
+            return;
         }
 
-        // T5.6: Migração e Carregamento
-        let encrypted = await this.dbGet(STORAGE_KEY);
-        
-        // Tentar migrar do localStorage se o IDB estiver vazio
-        if (!encrypted) {
-            const legacy = localStorage.getItem(STORAGE_KEY);
-            if (legacy) {
-                console.log('Migrando dados do LocalStorage para IndexedDB...');
-                await this.dbPut(STORAGE_KEY, legacy);
-                encrypted = legacy;
-                // Opcional: localStorage.removeItem(STORAGE_KEY);
-            }
+        // --- CHECK FOR MIGRATION ---
+        const legacyEncrypted = await this.dbGet('vault_store', LEGACY_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (legacyEncrypted) {
+            await this.migrateLegacyData(legacyEncrypted);
         }
 
-        if (encrypted) {
-            try {
-                this.data = await this.decrypt(encrypted);
-                const key = playerKey || localStorage.getItem('ACTIVE_PLAYER_KEY');
-                if (this.data.users[key] && !this.data.users[key].profiles) {
-                    this.data.users[key].profiles = [{ name: 'Padrão', characters: [], achievements: [] }];
-                    this.data.users[key].activeProfileIndex = 0;
+        // --- LOAD DATA (Fragmented) ---
+        await this.loadAll();
+    },
+
+    async migrateLegacyData(encrypted) {
+        console.log('Iniciando migração de dados legado...');
+        try {
+            const decrypted = await this.decrypt(encrypted);
+            
+            // Migrate Users
+            for (let k in decrypted.users) {
+                await this.dbPut('users', k, decrypted.users[k]);
+                // Migrate Characters from profiles if they exist
+                if (decrypted.users[k].profiles) {
+                    for (let profile of decrypted.users[k].profiles) {
+                        if (profile.characters) {
+                            for (let char of profile.characters) {
+                                await this.dbPut('characters', char.id, char);
+                            }
+                        }
+                    }
                 }
-            } catch (e) {
-                console.error('Falha na descriptografia. Chave inválida?');
-                this.data = { users: {}, sessions: {}, tavernBoard: [] };
+            }
+
+            // Migrate Sessions
+            for (let k in decrypted.sessions) {
+                await this.dbPut('sessions', k, decrypted.sessions[k]);
+            }
+
+            // Migrate Tavern
+            if (decrypted.tavernBoard) {
+                await this.dbPut('tavern', 'main_board', decrypted.tavernBoard);
+            }
+
+            // Cleanup
+            localStorage.removeItem(LEGACY_STORAGE_KEY);
+            const tx = this.db.transaction(['vault_store'], 'readwrite');
+            tx.objectStore('vault_store').delete(LEGACY_STORAGE_KEY);
+            console.log('Migração concluída com sucesso!');
+        } catch (e) {
+            console.error('Falha na migração:', e);
+        }
+    },
+
+    async loadAll() {
+        this.data.users = await this.dbGetAll('users');
+        this.data.sessions = await this.dbGetAll('sessions');
+        this.data.tavernBoard = await this.dbGet('tavern', 'main_board') || [];
+        
+        // Ensure profiles exist
+        for (let k in this.data.users) {
+            if (!this.data.users[k].profiles) {
+                this.data.users[k].profiles = [{ name: 'Padrão', characters: [], achievements: [] }];
+                this.data.users[k].activeProfileIndex = 0;
             }
         }
     },
 
-    async save() {
+    async save(category, key, value) {
         if (!this.cryptoKey) return;
-        const encrypted = await this.encrypt(this.data);
-        await this.dbPut(STORAGE_KEY, encrypted);
+        // In this fragmented version, we save specific keys
+        await this.dbPut(category, key, value);
     },
 
     async encrypt(obj) {
@@ -128,7 +186,6 @@ export const Storage = {
             encodedData
         );
 
-        // Result: IV (12 bytes) + Ciphertext
         const combined = new Uint8Array(iv.length + ciphertext.byteLength);
         combined.set(iv);
         combined.set(new Uint8Array(ciphertext), iv.length);
@@ -150,21 +207,19 @@ export const Storage = {
         return JSON.parse(new TextDecoder().decode(decodedData));
     },
 
-    /**
-     * Key Logic (Legacy compatibility for generation)
-     */
     generatePlayerKey(identifier) {
         return btoa(identifier.trim().toLowerCase() + 'SAL_TEMATICO').replace(/=/g, '');
     },
 
     async createUser(key, identifier) {
         if (!this.data.users[key]) {
-            this.data.users[key] = { 
+            const user = { 
                 identifier, 
                 profiles: [{ name: 'Aventureiro Padrão', characters: [], achievements: [] }],
                 activeProfileIndex: 0
             };
-            await this.save();
+            this.data.users[key] = user;
+            await this.save('users', key, user);
         }
     },
 
@@ -180,18 +235,30 @@ export const Storage = {
         const profile = this.getActiveProfile(playerKey);
         if (profile) {
             if (!charData.id) charData.id = 'char_' + Date.now();
-            const idx = profile.characters.findIndex(c => c.id === charData.id);
-            if (idx > -1) profile.characters[idx] = charData;
-            else profile.characters.push(charData);
-            await this.save();
+            
+            // Save to top-level characters store
+            await this.save('characters', charData.id, charData);
+
+            // Update profile character list (store only IDs for scalability)
+            if (!profile.characters.find(c => c === charData.id || c.id === charData.id)) {
+                profile.characters.push(charData.id);
+            }
+            // Compatibility: remove old character objects from list if they exist
+            profile.characters = profile.characters.map(c => typeof c === 'string' ? c : c.id);
+
+            await this.save('users', playerKey, this.data.users[playerKey]);
         }
+    },
+
+    async getCharacter(id) {
+        return await this.dbGet('characters', id);
     },
 
     async unlockAchievement(playerKey, title) {
         const profile = this.getActiveProfile(playerKey);
         if (profile && !profile.achievements.includes(title)) {
             profile.achievements.push(title);
-            await this.save();
+            await this.save('users', playerKey, this.data.users[playerKey]);
             return true;
         }
         return false;
@@ -199,8 +266,9 @@ export const Storage = {
 
     async createSession(masterKey) {
         const key = 'D&D-' + Math.random().toString(36).substring(2,6).toUpperCase();
-        this.data.sessions[key] = { masterKey, players: {}, logs: [] };
-        await this.save();
+        const session = { masterKey, players: {}, logs: [] };
+        this.data.sessions[key] = session;
+        await this.save('sessions', key, session);
         return key;
     },
 
@@ -208,23 +276,23 @@ export const Storage = {
         const s = this.data.sessions[sessionKey];
         if (s) {
             s.logs.push({ author, message, timestamp: new Date().toISOString(), type });
-            await this.save();
+            await this.save('sessions', sessionKey, s);
         }
     },
 
     async addTavernPost(message, author) {
         if (!this.data.tavernBoard) this.data.tavernBoard = [];
         this.data.tavernBoard.push({ author, message, timestamp: new Date().toISOString() });
-        // Keep only last 20 posts
         if (this.data.tavernBoard.length > 20) this.data.tavernBoard.shift();
-        await this.save();
+        await this.save('tavern', 'main_board', this.data.tavernBoard);
     },
 
     async saveMapState(sessionKey, tokens) {
         const s = this.data.sessions[sessionKey];
         if (s) {
             s.mapState = tokens;
-            await this.save();
+            await this.save('sessions', sessionKey, s);
         }
     }
 };
+
