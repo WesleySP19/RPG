@@ -1,12 +1,24 @@
 {
     "spells": [
-        { "name": "Fireball", "level": 3, "school": "Evocation", "range": "150 feet", "desc": "A bright streak flashes from your pointing finger..." },
-        { "name": "Cure Wounds", "level": 1, "school": "Abjuration", "range": "Touch", "desc": "A creature you touch regains a number of hit points..." },
-        { "name": "Magic Missile", "level": 1, "school": "Evocation", "range": "120 feet", "desc": "You create three glowing darts of magical force..." }
+        { "name": "Misseis Magicos", "level": 1, "desc": "Cria três dardos de força brilhantes. Cada dardo atinge uma criatura à sua escolha. Dano: 1d4 + 1 por dardo." },
+        { "name": "Bola de Fogo", "level": 3, "desc": "Uma explosão de fogo de 6 metros de raio. Criaturas na área devem fazer um teste de Destreza. Dano: 8d6 de fogo." },
+        { "name": "Cura Curativa", "level": 1, "desc": "Uma criatura que você tocar recupera um número de pontos de vida igual a 1d8 + seu modificador de conjuração." },
+        { "name": "Luz", "level": 0, "desc": "Um objeto que você tocar brilha intensamente em um raio de 6 metros." },
+        { "name": "Escudo arcano", "level": 1, "desc": "Uma barreira invisível de força mágica surge, concedendo +5 de CA até o início do seu próximo turno." }
     ],
     "monsters": [
-        { "name": "Goblin", "hp": 7, "ac": 15, "cr": "1/4", "stats": { "for": 8, "des": 14, "con": 10, "int": 10, "wis": 8, "cha": 8 } },
-        { "name": "Orc", "hp": 15, "ac": 13, "cr": "1/2", "stats": { "for": 16, "des": 12, "con": 16, "int": 7, "wis": 11, "cha": 10 } },
-        { "name": "Lich", "hp": 135, "ac": 17, "cr": "21", "stats": { "for": 11, "des": 16, "con": 16, "int": 20, "wis": 14, "cha": 16 } }
+        { "name": "Goblin", "cr": "1/4", "hp": 7, "ac": 15, "desc": "Pequenos humanóides verdes, astutos e perigosos em bando." },
+        { "name": "Orc", "cr": "1/2", "hp": 15, "ac": 13, "desc": "Guerreiros brutais que vivem para a conquista." },
+        { "name": "Dragão Vermelho (Jovem)", "cr": "10", "hp": 178, "ac": 18, "desc": "Uma besta alada massiva que exala fogo destrutivo." },
+        { "name": "Esqueleto", "cr": "1/4", "hp": 13, "ac": 13, "desc": "Mortos-vivos reanimados por necromancia profana." },
+        { "name": "Lobo", "cr": "1/4", "hp": 11, "ac": 13, "desc": "Predadores velozes que caçam em matilhas." }
+    ],
+    "items": [
+        { "name": "Espada Longa", "type": "Arma", "damage": "1d8 Cortante", "properties": "Versátil (1d10)", "cost": "15 po" },
+        { "name": "Cota de Malha", "type": "Armadura", "ac": "16", "properties": "Pesada, Requisito For 13, Desvantagem em Furtividade", "cost": "75 po" },
+        { "name": "Poção de Cura", "type": "Consumível", "desc": "Cura 2d4 + 2 pontos de vida.", "cost": "50 po" },
+        { "name": "Arco Curto", "type": "Arma", "damage": "1d6 Perfurante", "properties": "Munição (80/320), Duas Mãos", "cost": "25 po" },
+        { "name": "Escudo", "type": "Equipamento", "ac": "+2", "properties": "Requer uma mão livre para empunhar.", "cost": "10 po" },
+        { "name": "Cajado do Mago", "type": "Item Mágico", "properties": "Concede +2 em jogadas de ataque e dano de magia.", "cost": "Inestimável" }
     ]
 }

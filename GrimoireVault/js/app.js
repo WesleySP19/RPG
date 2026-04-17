@@ -1,339 +1,284 @@
-import { Storage } from './storage.js';
+/**
+ * Grimoire App Entry Point
+ * Orchestrating the Full Modular Experience.
+ */
+import { Storage } from './modules/Storage.js';
+import { State } from './modules/State.js';
+import { TacticalMap } from './modules/TacticalMap.js';
+import { Security } from './modules/Security.js';
+import { Network } from './modules/Network.js';
 import { UI } from './ui.js';
-import { TacticalMap } from './map.js';
-import { State } from './state.js';
-import { Sync } from './sync.js';
-import { SheetManager } from './modules/sheet_manager.js';
-import { SessionController } from './modules/session_controller.js';
-import { SRDBrowser } from './modules/srd_browser.js';
-
-const XP_THRESHOLDS = {
-    1: [25, 50, 75, 100], 2: [50, 100, 150, 200], 3: [75, 150, 225, 400],
-    4: [125, 250, 375, 500], 5: [250, 500, 750, 1100]
-};
 
 const App = {
     currentPlayerKey: null,
-    editingCharId: null,
     currentSessionKey: null,
-    activeMap: null,
-    searchTimeout: null,
+    editingCharId: null,
+    mapInstance: null,
+    srdData: null,
 
-    init() {
-        this.setupEventListeners();
-        this.checkAuth();
-        
-        State.subscribe((path, value) => {
-            if (path.startsWith('users') || path === 'tavernBoard') {
-                this.refreshDashboard();
-            }
-            if (path.startsWith('sessions')) {
-                if (this.currentSessionKey) SessionController.refresh(this.currentSessionKey, this);
-            }
-        });
+    async init() {
+        console.log("Grimório Inicializando...");
+        try {
+            await Storage.init();
+            this.setupListeners();
+            UI.renderCodice('player');
+        } catch (e) {
+            console.error("Falha no despertar arcano:", e);
+        }
     },
 
-        document.getElementById('btn-login').addEventListener('click', async () => {
-            const ident = document.getElementById('identificador').value;
-            if (ident) {
-                const key = Storage.generatePlayerKey(ident);
-                document.getElementById('access-key-output').textContent = key;
-                document.getElementById('key-display').style.display = 'block';
-                await Storage.init(key);
-                await Storage.createUser(key, ident);
-            }
-        });
+    setupListeners() {
+        document.getElementById('btn-login').onclick = () => {
+            const secret = document.getElementById('identificador').value;
+            if (!secret) return;
+            const key = Security.generateKey(secret);
+            document.getElementById('access-key-output').innerText = key;
+            document.getElementById('key-display').style.display = 'block';
+        };
 
-        document.getElementById('btn-copy-key').addEventListener('click', () => {
-            const key = document.getElementById('access-key-output').textContent;
-            navigator.clipboard.writeText(key).then(() => alert('Chave copiada!'));
-        });
+        document.getElementById('btn-enter').onclick = () => {
+            const key = document.getElementById('access-key-output').innerText;
+            this.login(key);
+        };
 
-        document.getElementById('btn-enter').addEventListener('click', async () => {
-            const key = document.getElementById('access-key-output').textContent;
-            await this.login(key);
-        });
-
-        // --- DASHBOARD VIEW ---
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            localStorage.removeItem('ACTIVE_PLAYER_KEY');
-            location.reload();
-        });
-
-        document.getElementById('btn-new-char').addEventListener('click', () => {
-            this.editingCharId = null;
-            document.getElementById('sheet-content').innerHTML = UI.renderCharacterForm();
-            UI.showView('view-sheet');
-        });
-
-        document.getElementById('btn-create-session').addEventListener('click', () => SessionController.create(this));
-        document.getElementById('btn-join-session').addEventListener('click', () => SessionController.join(this));
-        document.getElementById('btn-sync-qr').addEventListener('click', () => this.showSyncOptions());
-
-        // --- SESSION VIEW ---
-        document.getElementById('btn-add-note').addEventListener('click', () => SessionController.addNote(this));
-        document.getElementById('btn-open-srd').addEventListener('click', () => SRDBrowser.show(this));
-        document.getElementById('btn-open-map').addEventListener('click', () => this.showMap());
-        document.getElementById('btn-leave-session').addEventListener('click', () => UI.showView('view-dashboard'));
-        document.getElementById('btn-back-dashboard').addEventListener('click', () => UI.showView('view-dashboard'));
-
-        // Event Delegation
-        document.body.addEventListener('click', async (e) => {
-            if (e.target.id === 'btn-save-char') await SheetManager.save(this);
-            if (e.target.classList.contains('tab-btn')) this.switchTab(e.target);
-            if (e.target.classList.contains('srd-filter')) {
-                SRDBrowser.setFilter(e.target.dataset.filter);
-            }
-            
-            if (e.target.id === 'btn-add-token-pc') this.activeMap?.addToken('PC', '#B89B4B');
-            if (e.target.id === 'btn-add-token-npc') this.activeMap?.addToken('Orc', '#D0021B');
-            if (e.target.id === 'btn-clear-map') this.activeMap?.clear();
-            if (e.target.id === 'btn-gen-encounter') this.showEncounterGenerator();
-            if (e.target.id === 'btn-calc-encounter') this.calculateEncounter();
-            if (e.target.id === 'btn-hidden-roll') this.hiddenRoll();
-            if (e.target.id === 'btn-send-whisper') await this.sendWhisper();
-            
-            if (e.target.id === 'btn-add-tavern') await this.addTavernPost();
-            if (e.target.id === 'btn-open-homebrew') this.showHomebrew();
-            if (e.target.id === 'btn-save-homebrew') this.saveHomebrew();
-            if (e.target.id === 'btn-voice-roll') this.startVoiceCommand();
-        });
-
-        document.body.addEventListener('input', (e) => {
-            if (e.target.id === 'srd-search') {
-                this.debounce(() => SRDBrowser.update(), 300);
-            }
-            if (e.target.id === 'srd-level-filter') {
-                SRDBrowser.setLevel(e.target.value);
-            }
-            if (e.target.classList.contains('attr-trigger')) {
-                SheetManager.handleAttributeChange(e.target);
-            }
+        document.getElementById('btn-add-note').onclick = () => this.addDiaryNote();
+        document.getElementById('btn-back-dashboard').onclick = () => UI.showView('view-dashboard');
+        document.getElementById('btn-leave-session').onclick = () => this.leaveSession();
+        document.getElementById('btn-open-map').onclick = () => this.openMap();
+        document.getElementById('btn-open-srd').onclick = () => this.showSRD('items');
+        
+        // PWA Installation Support
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log("PWA Pronto para Instalação");
+            // Store event for a custom install button if needed
         });
     },
 
     async login(key) {
         this.currentPlayerKey = key;
-        localStorage.setItem('ACTIVE_PLAYER_KEY', key);
-        await Storage.init(key);
-        await State.syncFromStorage(); // Sync State with Storage after init
-        this.refreshDashboard();
+        const profile = Storage.getActiveProfile(key);
         UI.showView('view-dashboard');
+        UI.renderDashboard(profile, Storage.data.sessions);
+        this.filterHeroes();
+        this.refreshSessionList();
     },
 
-    async checkAuth() {
-        const saved = localStorage.getItem('ACTIVE_PLAYER_KEY');
-        if (saved) await this.login(saved);
-    },
-
-    async refreshDashboard() {
-        const user = Storage.data.users[this.currentPlayerKey];
+    async filterHeroes() {
         const profile = Storage.getActiveProfile(this.currentPlayerKey);
-        if (user && profile) {
-            // Load character objects from IDs
-            const characterObjects = await Promise.all(
-                profile.characters.map(id => typeof id === 'string' ? Storage.getCharacter(id) : id)
-            );
-            const validCharacters = characterObjects.filter(c => c);
+        const allChars = await Promise.all(profile.characters.map(id => Storage.getCharacter(id)));
+        const filter = document.getElementById('char-filter-class')?.value || 'all';
+        const filtered = allChars.filter(c => c && (filter === 'all' || c.class === filter));
+        UI.renderCharacterList(filtered);
+    },
 
-            document.getElementById('character-list').innerHTML = UI.renderCharacterList(validCharacters);
-            const achvHtml = profile.achievements.length > 0 
-                ? profile.achievements.map(a => `<span style="font-size:0.5rem; background:var(--clr-gold); padding:1px 4px; margin-right:2px; color:black; border-radius:2px;">${a}</span>`).join('')
-                : '<span style="opacity:0.4; font-size:0.6rem;">Nenhuma conquista...</span>';
-            
-            const header = `<div style="margin-bottom:1rem; border-bottom:1px solid var(--clr-gold); padding-bottom:0.5rem;">
-                <h4 style="font-size:0.8rem;">Persona: ${profile.name}</h4>
-                <div style="margin-top:4px;">${achvHtml}</div>
-            </div>`;
-            document.getElementById('character-list').insertAdjacentHTML('afterbegin', header);
+    refreshSessionList() {
+        UI.renderSessionList(Storage.data.sessions);
+    },
 
-            const sessions = Storage.data.sessions;
-            const list = Object.keys(sessions).filter(k => sessions[k].masterKey === this.currentPlayerKey || sessions[k].players[this.currentPlayerKey]);
-            const filteredSessions = {};
-            list.forEach(k => filteredSessions[k] = sessions[k]);
-            document.getElementById('session-list').innerHTML = UI.renderSessionList(filteredSessions);
+    async createSession() {
+        const id = await Storage.createSession(this.currentPlayerKey);
+        this.enterSession(id);
+    },
 
-            // Render Tavern
-            document.getElementById('tavern-board').innerHTML = UI.renderTavern(Storage.data.tavernBoard);
+    joinSession() {
+        const key = prompt("Digite a Chave da Mesa (ID):");
+        if (key && Storage.data.sessions[key]) {
+            this.enterSession(key);
+        } else if (key) {
+            alert("Mesa não encontrada no registro arcano.");
         }
     },
 
-    async addTavernPost() {
-        const input = document.getElementById('tavern-input');
-        if (input.value.trim()) {
-            const profile = Storage.getActiveProfile(this.currentPlayerKey);
-            await Storage.addTavernPost(input.value, profile.name);
-            input.value = '';
+    async enterSession(id) {
+        this.currentSessionKey = id;
+        UI.showView('view-session');
+        UI.renderCodice('session');
+        
+        // Connect to Real-time Stream
+        Network.connect(id, (msg) => this.handleNetworkEvent(msg));
+        
+        this.refreshSession();
+    },
+
+    handleNetworkEvent(msg) {
+        console.log("Evento Remoto recebido:", msg);
+        if (msg.type === 'SYNC_CHAT') {
+            this.refreshSession();
+        }
+        if (msg.type === 'SYNC_MAP') {
+            if (this.mapInstance) {
+                this.mapInstance.tokens = msg.tokens;
+            }
+        }
+        if (msg.type === 'SYNC_SHEET') {
+            // Update character locally if present in the data store
+            if (msg.character && msg.character.id) {
+                Storage.data.characters[msg.character.id] = msg.character;
+                if (this.editingCharId === msg.character.id) {
+                    UI.renderSheet(msg.character);
+                }
+            }
         }
     },
 
-    showHomebrew() {
-        document.getElementById('modal-inner').innerHTML = UI.renderHomebrewBuilder();
-        document.getElementById('modal-overlay').style.display = 'flex';
+    leaveSession() {
+        this.currentSessionKey = null;
+        UI.showView('view-dashboard');
+        UI.renderCodice('player');
     },
 
-    saveHomebrew() {
-        const name = document.getElementById('hb-name').value;
-        const desc = document.getElementById('hb-desc').value;
-        if (name) {
-            this.generateQR(JSON.stringify({ type: 'homebrew', name, desc }));
-            alert('Homebrew forjado! Escaneie o QR para compartilhar.');
-        }
-    },
-
-    debounce(func, wait) {
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = setTimeout(func, wait);
-    },
-
-    switchTab(btn) {
-        const tabId = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    },
-
-    async openChar(id) { await SheetManager.open(id, this); },
-    async editChar(id) { await SheetManager.edit(id, this); },
-    async enterSession(key) { await SessionController.enter(key, this); },
-    async confirmJoin(charId) {
-        if (await Storage.joinSession(this.pendingSessionKey, this.currentPlayerKey, charId)) {
-            document.getElementById('modal-overlay').style.display = 'none';
-            await this.enterSession(this.pendingSessionKey);
-        } else {
-            alert('Falha ao ingressar.');
-        }
-    },
-
-    showMap() {
-        if (!this.currentSessionKey) return alert('Entre em uma mesa primeiro!');
+    async refreshSession() {
+        if (!this.currentSessionKey) return;
         const session = Storage.data.sessions[this.currentSessionKey];
-        const initialState = session.mapState || [];
+        const isMaster = session.masterKey === this.currentPlayerKey;
         
-        document.getElementById('modal-inner').innerHTML = UI.renderMapContainer();
-        document.getElementById('modal-overlay').style.display = 'flex';
+        UI.renderSessionDiary(session.logs);
         
-        setTimeout(() => {
-            this.activeMap = new TacticalMap(
-                'tactical-canvas', 
-                initialState, 
-                (tokens) => Storage.saveMapState(this.currentSessionKey, tokens)
-            );
-        }, 100);
-    },
+        let content = `<div class="panel glass-panel" style="text-align:center; padding:10px;">
+            Mesa Ativa: <strong>${session.id}</strong> | Você é o **${isMaster?'MESTRE':'JOGADOR'}**
+        </div>`;
 
-    showEncounterGenerator() {
-        document.getElementById('modal-inner').innerHTML = UI.renderEncounterGenerator(SRDBrowser.srdData?.monsters || []);
-        document.getElementById('modal-overlay').style.display = 'flex';
-    },
-
-    calculateEncounter() {
-        const size = parseInt(document.getElementById('group-size').value);
-        const level = parseInt(document.getElementById('group-level').value);
-        const budget = (XP_THRESHOLDS[level] || XP_THRESHOLDS[1])[1] * size;
-        const monsters = SRDBrowser.srdData?.monsters || [];
-        const suggestion = monsters.filter(m => (parseInt(m.cr) * 100 || 50) <= budget);
-        if (suggestion.length > 0) {
-            const s = suggestion[Math.floor(Math.random() * suggestion.length)];
-            document.getElementById('encounter-result').innerHTML = `<p><strong>${s.name}</strong> (XP: ${budget})</p>`;
+        if (isMaster) {
+            content += `
+                <div class="dm-controls" style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:10px;">
+                    <button onclick="window.app.pushCD(10)" class="grimoire-btn" style="font-size:9px;">CD 10 (FÁCIL)</button>
+                    <button onclick="window.app.pushCD(15)" class="grimoire-btn" style="font-size:9px;">CD 15 (MÉDIO)</button>
+                    <button onclick="window.app.resetMapFog()" class="grimoire-btn" style="font-size:9px; border-color:#2ecc71;">RESET NÉVOA</button>
+                    <button onclick="window.app.resetMapTokens()" class="grimoire-btn" style="font-size:9px; border-color:#e74c3c;">VRESET MAPA</button>
+                </div>`;
         }
-    },
 
-    hiddenRoll() {
-        const r = Math.floor(Math.random() * 20) + 1;
-        alert(`O Mestre lançou os dados em segredo... Resultado: ${r}`);
-        Storage.addLog(this.currentSessionKey, '🎲 O Mestre realizou uma rolagem oculta.', 'Mestre', 'secret');
-    },
-
-    startVoiceCommand() {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Speech) return alert('Voz não suportada.');
-
-        const recognition = new Speech();
-        recognition.lang = 'pt-BR';
-        recognition.start();
-
-        alert('Ouvindo comando (ex: "rolar dados")...');
-        recognition.onresult = (e) => {
-            const transcript = e.results[0][0].transcript.toLowerCase();
-            if (transcript.includes('rolar') || transcript.includes('dados')) {
-                const res = Math.floor(Math.random() * 20) + 1;
-                alert(`🎲 Rolagem de Voz: ${res}!`);
-            }
-        };
-    },
-
-    async sendWhisper() {
-        const msg = prompt('Sussurro:');
-        if (msg) {
-            await Storage.addLog(this.currentSessionKey, `🤫 [Sussurro]: ${msg}`, 'Mestre', 'whisper');
-        }
-    },
-
-    generateQR(text) {
-        const qr = qrcode(0, 'L');
-        qr.addData(text);
-        qr.make();
-        document.getElementById('qr-result').innerHTML = qr.createImgTag(4);
-    },
-
-    showSyncOptions() {
-        document.getElementById('modal-inner').innerHTML = `
-            <h3>Sincronização QR</h3>
-            <div style="display:flex; gap:1rem; justify-content:center; margin:1rem 0;">
-                <button id="btn-qr-exp" class="grimoire-btn">Exportar</button>
-                <button id="btn-qr-imp" class="grimoire-btn">Escanear</button>
+        content += `<div class="initiative-tracker glass-panel" style="margin-top:1rem; padding:10px;">
+            <h4 style="font-size:10px; color:var(--clr-gold);">RASTRADOR DE INICIATIVA</h4>
+            <div id="init-list" style="margin-top:5px;">
+                ${session.initiative.sort((a,b)=>b.val-a.val).map(i => `<div class="list-item" style="font-size:10px;"><span>${i.name}</span><strong>${i.val}</strong></div>`).join('') || '<small>Vazio...</small>'}
             </div>
-            <div id="qr-result" style="display:flex; justify-content:center;"></div>
-        `;
-        document.getElementById('modal-overlay').style.display = 'flex';
-        document.getElementById('btn-qr-exp').onclick = () => this.generateQR(JSON.stringify({ key: this.currentPlayerKey, ...Storage.data.users[this.currentPlayerKey] }));
-        document.getElementById('btn-qr-imp').onclick = () => this.startScanner();
+            ${isMaster ? `
+                <div style="display:flex; gap:2px; margin-top:10px;">
+                    <input id="init-n" placeholder="Nome" class="grimoire-input" style="flex:2; font-size:9px;">
+                    <input id="init-v" type="number" placeholder="Roll" class="grimoire-input" style="flex:1; font-size:9px;">
+                    <button onclick="window.app.addInit()" class="grimoire-btn" style="font-size:9px;">+</button>
+                </div>
+            `:''}
+        </div>`;
+
+        document.getElementById('session-content').innerHTML = content;
     },
 
-    async startScanner() {
-        const video = document.createElement('video');
-        video.setAttribute('id', 'qr-video');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-            video.srcObject = stream;
-            video.play();
-            document.getElementById('modal-inner').innerHTML = `<canvas id="qr-canvas" style="width:100%"></canvas>`;
-            const canvasElement = document.getElementById('qr-canvas');
-            const canvas = canvasElement.getContext('2d');
-            const tick = () => {
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    canvasElement.width = video.videoWidth;
-                    canvasElement.height = video.videoHeight;
-                    canvas.drawImage(video, 0, 0);
-                    const code = jsQR(canvas.getImageData(0,0,canvasElement.width,canvasElement.height).data, canvasElement.width, canvasElement.height);
-                    if (code) {
-                        this.processQR(code.data);
-                        stream.getTracks().forEach(t => t.stop());
-                    } else if (document.getElementById('modal-overlay').style.display === 'flex') requestAnimationFrame(tick);
-                } else requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-        } catch(e) { alert('Erro ao acessar câmera: ' + e); }
+    async addDiaryNote() {
+        const input = document.getElementById('diary-input');
+        if (!input.value || !this.currentSessionKey) return;
+        const msg = Security.sanitize(input.value);
+        const profile = Storage.getActiveProfile(this.currentPlayerKey);
+        await Storage.addLog(this.currentSessionKey, msg, profile.name);
+        
+        // Broadcast to Mesh
+        Network.broadcast('SYNC_CHAT', { author: profile.name, message: msg });
+        
+        input.value = '';
+        this.refreshSession();
     },
 
-    async processQR(text) {
-        try {
-            const data = JSON.parse(text);
-            if (data.key) {
-                Storage.data.users[data.key] = data;
-                await Storage.save('users', data.key, data);
-                await this.login(data.key);
-                document.getElementById('modal-overlay').style.display = 'none';
-            }
-        } catch(e) { alert('QR Inválido'); }
-    }
+    async pushCD(val) {
+        await Storage.addLog(this.currentSessionKey, `⚜️ Desafio lançado pelo Mestre: **CD ${val}**`, 'SISTEMA', 'system');
+        this.refreshSession();
+    },
+
+    async rollD20() {
+        const val = Math.floor(Math.random() * 20) + 1;
+        const profile = Storage.getActiveProfile(this.currentPlayerKey);
+        const color = val === 1 ? '#ff4444' : (val === 20 ? '#E5C100' : '#B89B4B');
+        const msg = `🎲 **Ritual de Dado:** <span style="color:${color}; font-weight:bold;">${val}</span>`;
+        await Storage.addLog(this.currentSessionKey, msg, profile.name, 'system');
+        this.refreshSession();
+    },
+
+    async addInit() {
+        const n = document.getElementById('init-n').value;
+        const v = parseInt(document.getElementById('init-v').value);
+        if(!n || isNaN(v)) return;
+        const session = Storage.data.sessions[this.currentSessionKey];
+        session.initiative.push({ name: n, val: v });
+        await Storage.saveSession(this.currentSessionKey, session);
+        this.refreshSession();
+    },
+
+    openSheet(id = null) {
+        this.editingCharId = id;
+        UI.showView('view-sheet');
+        const char = id ? Storage.data.characters[id] : {};
+        UI.renderSheet(char);
+    },
+
+    async saveCharacter() {
+        const charData = {
+            id: this.editingCharId,
+            name: document.getElementById('char-name').value,
+            class: document.getElementById('char-class').value,
+            background: document.getElementById('char-bg').value,
+            race: document.getElementById('char-race').value,
+            alignment: document.getElementById('char-align').value,
+            ac: parseInt(document.getElementById('char-ac').value),
+            hpMax: parseInt(document.getElementById('char-hp-max').value),
+            hpCurrent: parseInt(document.getElementById('char-hp-current').value),
+            speed: document.getElementById('char-speed').value,
+            attacks: document.getElementById('char-attacks').value,
+            features: document.getElementById('char-features').value,
+            traits: {
+                'Traços de Personalidade': document.getElementById('char-traços-de-personalidade').value,
+                'Ideais': document.getElementById('char-ideais').value,
+                'Ligações': document.getElementById('char-ligações').value,
+                'Defeitos': document.getElementById('char-defeitos').value,
+            },
+            attributes: {},
+            proficiencies: [], // Expansion logic for proficiencies would follow
+            inventory: [] 
+        };
+        document.querySelectorAll('.attr-field').forEach(f => {
+            charData.attributes[f.dataset.attr] = parseInt(f.value);
+        });
+        await Storage.saveCharacter(this.currentPlayerKey, charData);
+        
+        // Broadcast Sheet Update
+        Network.broadcast('SYNC_SHEET', { character: charData });
+        
+        UI.showView('view-dashboard');
+        this.login(this.currentPlayerKey);
+    },
+
+    async showSRD(category) {
+        if (!this.srdData) {
+            const r = await fetch('./rules_srd.json');
+            this.srdData = await r.json();
+        }
+        UI.renderSRD(this.srdData, category);
+    },
+
+    addItemToSheet(category, name) {
+        console.log(`Adicionando ${name} ao inventário...`);
+        // Real implementation would update the editing character
+        UI.closeModal();
+    },
+
+    setCodiceMode(mode) {
+        UI.renderCodice(mode);
+    },
+
+    openMap() {
+        const session = Storage.data.sessions[this.currentSessionKey];
+        UI.openModal(`<canvas id="tactical-canvas" width="800" height="600" style="width:100%; border:1px solid var(--clr-gold);"></canvas>`);
+        this.mapInstance = new TacticalMap('tactical-canvas', session.mapTokens || [], async (tokens) => {
+            session.mapTokens = tokens;
+            await Storage.saveSession(this.currentSessionKey, session);
+            
+            // Broadcast Map State
+            Network.broadcast('SYNC_MAP', { tokens });
+        });
+    },
+
+    resetMapFog() { if(this.mapInstance) this.mapInstance.resetFog(); },
+    resetMapTokens() { if(this.mapInstance) this.mapInstance.resetTokens(); }
 };
 
 window.app = App;
-App.init();
-
-
-window.app = App;
-App.init();
+window.onload = () => App.init();

@@ -1,15 +1,29 @@
 @echo off
-echo [GRIMOIRE VAULT] Iniciando o Cofre Arcano...
-echo 📜 Verificando ambiente...
+echo ===================================================
+echo   GRIMOIRE VAULT VTT - Portal de Inicializacao
+echo ===================================================
+echo.
+echo Tentando abrir o Cofre Arcano...
+echo.
 
-python --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [AVISO] Python não encontrado. O PWA pode não funcionar offline corretamente.
-    echo [INFO] Abrindo o arquivo index.html diretamente...
-    start "" "index.html"
-) else (
-    echo [SUCESSO] Servidor iniciado em http://localhost:8000
-    start "" "http://localhost:8000"
+:: Tenta usar Python para o servidor (comum em Windows/Dev)
+where python >nul 2>1
+if %errorlevel% == 0 (
+    echo [OK] Servidor Python Detectado.
+    echo Acesse: http://localhost:8000
+    start http://localhost:8000
     python -m http.server 8000
+) else (
+    :: Tenta usar NPX como fallback
+    where npx >nul 2>1
+    if %errorlevel% == 0 (
+        echo [OK] Servidor Node/NPX Detectado.
+        echo Acesse: http://localhost:8080
+        npx http-server ./
+    ) else (
+        echo [ERRO] Nenhum servidor local detectado (Python ou Node).
+        echo Por favor, instale o Python ou arraste o 'index.html' para o Chrome.
+        echo Nota: Algumas funcoes de modulo JS podem exigir um servidor local.
+        pause
+    )
 )
-pause
