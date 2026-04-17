@@ -14,7 +14,9 @@ export const SRDViewer = {
                 </div>
                 <div class="scroll-panel" style="max-height:300px;">
                     ${list.map(item => `
-                        <div class="srd-item list-item" style="padding:10px; margin-bottom:10px; border:1px solid rgba(184,155,75,0.2);">
+                        <div class="srd-item list-item" draggable="true" 
+                             ondragstart="event.dataTransfer.setData('text/plain', JSON.stringify({ category: '${category}', item: '${item.name}' }))"
+                             style="padding:10px; margin-bottom:10px; border:1px solid rgba(184,155,75,0.2); cursor:grab;">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
                                 <strong>${item.name}</strong>
                                 <button class="grimoire-btn" style="font-size:9px; padding:2px 8px;" onclick="window.app.addItemToSheet('${category}', '${item.name}')">+ ADD</button>

@@ -84,8 +84,11 @@ export const CharacterSheet = {
                     </div>
 
                     <div style="margin-top:20px; border:1px solid #000; padding:10px;">
-                        <h4 style="font-size:10px;">ATAQUES E MAGIAS</h4>
-                        <textarea id="char-attacks" class="grimoire-input" style="width:100%; height:150px; font-size:10px; color:#000;">${char.attacks || ''}</textarea>
+                        <h4 style="font-size:10px;">ATAQUES E MAGIAS (Arraste Itens Aqui)</h4>
+                        <textarea id="char-attacks" class="grimoire-input" 
+                                  ondragover="event.preventDefault()" 
+                                  ondrop="window.app.handleDropOnSheet(event, 'char-attacks')"
+                                  style="width:100%; height:150px; font-size:10px; color:#000;">${char.attacks || ''}</textarea>
                     </div>
                 </div>
 

@@ -7,6 +7,8 @@ import { State } from './modules/State.js';
 import { TacticalMap } from './modules/TacticalMap.js';
 import { Security } from './modules/Security.js';
 import { Network } from './modules/Network.js';
+import { SoundEngine } from './modules/SoundEngine.js';
+import { DiceEngine } from './components/DiceEngine.js';
 import { UI } from './ui.js';
 
 const App = {
@@ -119,6 +121,14 @@ const App = {
                 }
             }
         }
+        if (msg.type === 'SYNC_AUDIO') {
+            if (msg.action === 'play') SoundEngine.playTrack(msg.track);
+            if (msg.action === 'stop') SoundEngine.stopBGM();
+            if (msg.action === 'sfx') SoundEngine.playSFX(msg.track);
+        }
+        if (msg.type === 'SYNC_DICE') {
+            DiceEngine.roll(msg.result, msg.isCritical);
+        }
     },
 
     leaveSession() {
@@ -145,6 +155,15 @@ const App = {
                     <button onclick="window.app.pushCD(15)" class="grimoire-btn" style="font-size:9px;">CD 15 (MÉDIO)</button>
                     <button onclick="window.app.resetMapFog()" class="grimoire-btn" style="font-size:9px; border-color:#2ecc71;">RESET NÉVOA</button>
                     <button onclick="window.app.resetMapTokens()" class="grimoire-btn" style="font-size:9px; border-color:#e74c3c;">VRESET MAPA</button>
+                </div>
+                <!-- MASTER SOUNDBOARD -->
+                <div class="glass-panel" style="margin-top:10px; padding:10px; text-align:center;">
+                    <h4 style="font-size:9px; margin-bottom:5px;">AURA SONORA</h4>
+                    <div style="display:flex; gap:5px; justify-content:center;">
+                        <button onclick="window.app.broadcastAudio('play', 'tavern')" class="grimoire-btn" style="font-size:8px; flex:1;">🍺 Taverna</button>
+                        <button onclick="window.app.broadcastAudio('play', 'combat')" class="grimoire-btn" style="font-size:8px; flex:1; border-color:#e74c3c;">⚔️ Combate</button>
+                        <button onclick="window.app.broadcastAudio('play', 'exploration')" class="grimoire-btn" style="font-size:8px; flex:1;">🌲 Caverna</button>
+                    </div>
                 </div>`;
         }
 
@@ -163,6 +182,15 @@ const App = {
         </div>`;
 
         document.getElementById('session-content').innerHTML = content;
+    },
+
+    broadcastAudio(action, track) {
+        // Play locally and broadcast
+        if (action === 'play') SoundEngine.playTrack(track);
+        if (action === 'stop') SoundEngine.stopBGM();
+        if (action === 'sfx') SoundEngine.playSFX(track);
+        
+        Network.broadcast('SYNC_AUDIO', { action, track });
     },
 
     async addDiaryNote() {
@@ -188,8 +216,18 @@ const App = {
         const val = Math.floor(Math.random() * 20) + 1;
         const profile = Storage.getActiveProfile(this.currentPlayerKey);
         const color = val === 1 ? '#ff4444' : (val === 20 ? '#E5C100' : '#B89B4B');
+        const isCritical = (val === 20);
         const msg = `🎲 **Ritual de Dado:** <span style="color:${color}; font-weight:bold;">${val}</span>`;
         await Storage.addLog(this.currentSessionKey, msg, profile.name, 'system');
+        
+        // Play SFX locally and broadcast
+        this.broadcastAudio('sfx', 'dice');
+        // Play Dice Locally
+        DiceEngine.roll(val, isCritical);
+        // Broadcast Chat & Dice
+        Network.broadcast('SYNC_DICE', { result: val, isCritical });
+        Network.broadcast('SYNC_CHAT', { author: profile.name, message: msg });
+        
         this.refreshSession();
     },
 
@@ -258,6 +296,23 @@ const App = {
         console.log(`Adicionando ${name} ao inventário...`);
         // Real implementation would update the editing character
         UI.closeModal();
+    },
+
+    handleDropOnSheet(event, targetId) {
+        event.preventDefault();
+        try {
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+            if (!this.srdData || !this.srdData[data.category]) return;
+            
+            const item = this.srdData[data.category].find(i => i.name === data.item);
+            if (item) {
+                const targetArea = document.getElementById(targetId);
+                const desc = item.properties || item.desc || `Dano: ${item.damage}`;
+                targetArea.value += `\n[${item.name.toUpperCase()}] - ${desc}`;
+            }
+        } catch (e) {
+            console.error("Erro ao processar item do compêndio", e);
+        }
     },
 
     setCodiceMode(mode) {

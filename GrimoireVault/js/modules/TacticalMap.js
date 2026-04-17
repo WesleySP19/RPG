@@ -131,15 +131,28 @@ export class TacticalMap {
         for(let y=-2000; y<2000; y+=cellSize) { ctx.moveTo(-2000,y); ctx.lineTo(2000,y); }
         ctx.stroke();
 
-        // Fog of War
-        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        // Dynamic Token Fog of War
+        ctx.fillStyle = 'rgba(0,0,0,0.95)';
         ctx.fillRect(-2000, -2000, 4000, 4000);
         ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'white';
-        this.fogOfWar.forEach(cell => {
-            const [gx, gy] = cell.split(',').map(Number);
-            ctx.fillRect(gx * cellSize, gy * cellSize, cellSize, cellSize);
+        
+        // Use tokens to punch holes in the darkness (Light Radius = 30ft = 6 cells)
+        this.tokens.forEach(t => {
+            const centerX = t.x + cellSize / 2;
+            const centerY = t.y + cellSize / 2;
+            const radius = cellSize * 6; 
+            
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.2, centerX, centerY, radius);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.4)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
         });
+        
         ctx.globalCompositeOperation = 'source-over';
 
         // Tokens
