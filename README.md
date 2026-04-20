@@ -1,62 +1,87 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Status-Lend%C3%A1rio-gold?style=for-the-badge" alt="Status Lendário">
-  <img src="https://img.shields.io/badge/Zero-Depend%C3%AAncias-red?style=for-the-badge" alt="Zero Dependências">
-  <img src="https://img.shields.io/badge/Open-Source-brightgreen?style=for-the-badge" alt="Open Source">
+  <img src="https://img.shields.io/badge/Versão-3.0.3-blueviolet?style=for-the-badge" alt="Versão 3.0.3">
+  <img src="https://img.shields.io/badge/Status-Produção-success?style=for-the-badge" alt="Status Produção">
+  <img src="https://img.shields.io/badge/Engine-Vanilla%20JS-yellow?style=for-the-badge" alt="Vanilla JS">
+  <img src="https://img.shields.io/badge/Backend-Spring%20Boot-brightgreen?style=for-the-badge" alt="Spring Boot">
 </div>
 
-# 📜 Grimoire Vault VTT
+# 📜 Grimoire Vault VTT: Master Architect Edition
 
-Bem-vindos(as) à Taverna, aventureiros! Puxe uma cadeira, peça uma caneca de hidromel e abra seu grimório. 🍺✨
+Bem-vindos ao futuro das suas aventuras de RPG. O **Grimoire Vault** evoluiu de um simples Cofre Arcano para uma infraestrutura completa de Virtual Tabletop (VTT), focada em imersão, performance extrema e facilidade de uso.
 
-O **Grimoire Vault** não é apenas um VTT (Virtual Tabletop). Ele é a manifestação de um feitiço de nível 9 focado em uma única coisa: **Tornar o RPG de Mesa divertido, imersivo e absurdamente fácil de jogar**. 
-
-Este projeto é um apanhado de ideias mágicas e mecânicas malucas de mestres e jogadores que se uniram para criar o sistema definitivo. Cansado de VTTs pesados que precisam de um clérigo de TI para rodar? Nós também. É por isso que forjamos tudo puramente em **Vanilla**, focado no que importa: a história, os dados rolando e a criação relâmpago da sua ficha épica de D&D 5e!
+Esta versão **3.0.3** marca a transição definitiva para uma arquitetura profissional, abandonando dependências externas pesadas em favor de um **Servidor de Autoridade (Mestre)** robusto e um **Frontend Pure Vanilla** ultra-veloz.
 
 ---
 
-## 🔮 Por Que Este Grimório Existe?
+## 🏛️ Nova Arquitetura: O Equilíbrio entre Poder e Leveza
 
-Nós queríamos um sistema onde a criação de uma *Ficha de Personagem* não parecesse imposto de renda, e onde a imersão visual e sonora caminhasse lado a lado com a aventura.
+Diferente de outros VTTs que exigem máquinas potentes ou configurações complexas, o Grimoire Vault foi reimaginado com uma modularidade estratégica:
 
-*   **Para os Jogadores**: Uma Forja de Heróis que automatiza as contas chatas (sério, deixa que a gente calcula seu Bônus de Proficiência) para que você foque em descrever como seu Machado de Batalha corta o ar.
-*   **Para os Mestres (GMs)**: Um painel capaz de dominar luz, sombras, névoas táticas, som ambiente e orquestrar deuses e monstros em tempo real, sem latência.
+*   **⚡ Frontend (O Cofre):** Construído 100% em Vanilla JavaScript, HTML5 e CSS3. Sem frameworks pesados (React/Angular/Vue), garantindo que os dados rolem a 60fps mesmo em máquinas modestas.
+*   **🛡️ Backend (O Mestre):** Um servidor de autoridade robusto construído em **Spring Boot (Java 17)**. Ele gerencia a persistência de personagens, sincronização de sessões e segurança dos dados.
+*   **💾 Database:** Utiliza **H2 Database** (para portabilidade e testagem rápida) integrado via **Spring Data JPA**.
 
 ---
 
 ## ⚔️ O Que Tem no Baú do Tesouro? (Features)
 
-*   🎼 **Aura Sonora Multi-Dimensional**: O Mestre aperta um botão e BOOM, a música de combate boss-level de orquestra (ou barulhos e rangidos de taverna) toca **sincronizada** no navegador de todos na mesa.
-*   🤌 **Compêndio Drag-and-Drop (Puxa & Solta)**: Achou uma magia legal no nosso Compêndio Arcano? Arraste ela direto para a sua Ficha Pro! Simples, tátil, como pegar uma poção da bolsa.
-*   👁️ **Visão Tática Dinâmica (Token Fog)**: Esqueça pintar quadrado preto por quadrado preto no mapa. Mova o token do seu herói na grade tática rotativa a 60fps e veja a escuridão ceder à luz puramente pelo seu campo de visão.
-*   🎲 **Rolagens 3D de Pura Adrenalina (Vanilla CSS!)**: Nada de bibliotecas pesadas de polígonos. Nossos dados explodem na tela em 3D reativo via Web Animations CSS e Matrix, ecoando perfeitamente a tensão sonora do crítico e do fracasso na Party.
-*   📜 **Ficha "Loyal Pro" D&D 5e**: Um simulacro visual tri-colunar de pergaminho perfeitamente desenhado da ficha oficial do 5e, com as 12 classes e atributos que se auto-calculam magicamente.
+*   🏰 **Persistência de Personagem Real:** Suas fichas não vivem mais apenas no navegador. Elas são salvas em um banco de dados centralizado via API REST, permitindo acesso de qualquer lugar.
+*   🎲 **D&D 5e "Loyal Pro":** Automação total de fichas de D&D 5e. Cálculos de modificadores, bônus de proficiência, salvaguardas e slots de magia automáticos.
+*   👁️ **Visão Tática Dinâmica:** Sistema de névoa de guerra e campo de visão em tempo real focado no seu Token. Se o seu personagem não vê, você também não vê.
+*   🎼 **Aura Sonora Sincronizada:** O Mestre controla a trilha sonora e ela toca instantaneamente para todos os jogadores, criando a atmosfera perfeita para cada encontro.
+*   ⚡ **Zero-Lag Interface:** Menus e janelas projetados para serem táteis e rápidos, com suporte a Drag & Drop para o Compêndio Arcano.
 
 ---
 
-## 🛠️ Nosso Alinhamento Caótico e Bom (A Tecnologia)
+## 🚀 Como Iniciar a Jornada
 
-O **Grimoire Vault** foi forjado no fogo do **Zero-Dependências**:
-*   `🕸️` **HTML5, CSS3, e Vanilla JavaScript** (Nada de Babel, nada de NPM install pra rodar a fundação).
-*   `💾` **IndexedDB** local para salvar cemitérios e santuários de fichas.
-*   `🌩️` **AWS Serverless WebSockets (Lambda + DynamoDB)** para a sincronização real time da sessão multiplayer sem travar a máquina do Mestre!
+O sistema foi preparado para ser iniciado com um único feitiço (script).
+
+### Pré-requisitos
+*   **Java JDK 17** ou superior.
+*   **Node.js** (opcional, para o servidor de arquivos do frontend) ou **Python**.
+*   **Maven** (integrado opcionalmente).
+
+### Passo a Passo
+1.  **Clone o Repositório:**
+    ```bash
+    git clone https://github.com/seu-usuario/RPG.git
+    cd RPG
+    ```
+2.  **Invoque os Servidores:**
+    Execute o arquivo `START_SERVERS.bat` na raiz do projeto. Isso irá:
+    *   Iniciar o **Backend Spring Boot** na porta `8080`.
+    *   Iniciar o **Frontend** na porta `8020`.
+    *   Abrir seu navegador automaticamente em `localhost:8020`.
+
+3.  **Role os Dados!** 🎲
 
 ---
 
-## 🤝 O Feitiço do Open Source (Contribua!)
+## 🛠️ O Arsenal Tecnológico (Tech Stack)
 
-**Este projeto é um feitiço de Código Aberto (Open Source)!** 🪄
+| Camada | Tecnologia |
+| :--- | :--- |
+| **Frontend** | Vanilla JS, CSS Variables, HTML5 Canvas, IndexedDB (Fallback) |
+| **Backend** | Java 17, Spring Boot 3.1.5, Spring Security, Maven |
+| **Persistência** | Hibernate / Spring Data JPA, H2 Database |
+| **Comunicação** | Protocólos RESTful, WebSockets (Sync) |
 
-Somos um apanhado de mentes criativas e adoramos *Homebrews*. Quer codar uma classe nova? Sentiu falta de uma mecânica de sanidade de Cthulhu? Tem um CSS maneiro para um botão que sangra quando toma dano? 
+---
 
-**Entre na party:**
-1.  Saque sua Adaga (Faça o `Fork` do projeto).
-2.  Invoque seu ramo (`git checkout -b feature/minha-mecânica-epica`).
-3.  Prenda a alma no cristal (`git commit -m 'Add Magia Nova'`).
-4.  Lance no plano astral (`git push origin feature/minha-mecânica-epica`).
-5.  Enalteça o Rei (`Abra um Pull Request`).
+## 🤝 Contribua com o Feitiço
+
+Este projeto é **Open Source** e aceita sugestões de melhorias, novos sistemas (Pathfinder, Tormenta20) ou correções de bugs.
+
+1.  Dê um `Fork` no projeto.
+2.  Crie sua branch de feature (`git checkout -b feature/SuaMecanica`).
+3.  Faça o `Commit` (`git commit -m 'Mod: Adicionado Necromancia'`).
+4.  Abra um `Pull Request`.
 
 ---
 
 <p align="center">
-  <i>"Rolem seus dados. Sua aventura está apenas começando."</i> 🎲🐉
+  <i>"Não é apenas sobre os números na ficha, é sobre a história que contamos juntos."</i><br>
+  <b>Grimoire Vault Team</b> 🐉✨
 </p>
+
