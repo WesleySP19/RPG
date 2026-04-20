@@ -1,0 +1,79 @@
+
+.sheet-pro {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+    background: linear-gradient(135deg, hsla(0, 0%, 5%, 0.95) 0%, hsla(0,0%, 2%, 0.98) 100%);
+    color: var(--clr-scroll); padding: 3rem; border: 1px solid var(--glass-border);
+    border-radius: 12px; font-family: var(--font-body); box-shadow: var(--shadow-premium);
+    position: relative; overflow: hidden;
+}
+.sheet-pro::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    opacity: 0.15; pointer-events: none;
+}
+.sheet-pro input, .sheet-pro textarea {
+    background: hsla(0, 0%, 100%, 0.05) !important; border: 1px solid var(--glass-border) !important;
+    border-radius: 4px; color: var(--clr-gold) !important; padding: 8px !important;
+    font-family: var(--font-body); transition: var(--transition-arcane);
+}
+.sheet-pro input:focus, .sheet-pro textarea:focus {
+    background: hsla(var(--h-gold), 45%, 51%, 0.05) !important;
+    border-color: var(--clr-gold) !important; box-shadow: 0 0 10px var(--clr-gold-glow);
+}
+.sheet-header {
+    grid-column: span 3; display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;
+    border: 1px solid var(--clr-gold); padding: 2rem;
+    background: hsla(var(--h-wine), 30%, 10%, 0.4); border-radius: 8px; margin-bottom: 2rem; position: relative;
+}
+.attr-box-pro {
+    border: 1px solid var(--clr-gold); border-radius: 12px; padding: 15px; text-align: center;
+    margin-bottom: 15px; background: hsla(var(--h-gold), 20%, 10%, 0.3); transition: var(--transition-arcane);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.attr-box-pro:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--clr-gold-glow); border-color: var(--clr-gold-light); }
+.attr-box-pro .attr-mod { font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--clr-gold-light); display: block; text-shadow: 0 0 8px var(--clr-gold-glow); }
+.attr-box-pro .attr-score { width: 45px !important; height: 45px !important; border-radius: 50% !important; margin: 5px auto 0 !important; font-size: 0.9rem !important; display: flex !important; align-items: center; justify-content: center; background: var(--clr-bg) !important; border: 1px solid var(--clr-gold) !important; }
+.skill-list-pro { background: hsla(0, 0%, 0%, 0.3); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 8px; font-size: 0.8rem; }
+.skill-item-pro { display: grid; grid-template-columns: 24px 40px 1fr; align-items: center; padding: 6px; border-bottom: 1px solid hsla(0, 0%, 100%, 0.05); transition: 0.2s; }
+.skill-item-pro:hover { background: hsla(var(--h-gold), 45%, 51%, 0.05); color: var(--clr-gold-light); }
+.combat-box-pro { border: 1px solid var(--clr-gold); padding: 20px; text-align: center; background: hsla(var(--h-wine), 30%, 15%, 0.4); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+.hp-box-pro { border: 2px solid var(--clr-wine-light); padding: 20px; border-radius: 12px; background: hsla(0, 0%, 0%, 0.4); margin-top: 1.5rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+
+@media (max-width: 900px) { .sheet-pro { grid-template-columns: 1fr; } }
+
+
+.builder-layout { display: grid; grid-template-columns: 320px 1fr; grid-template-rows: 100vh; height: 100vh; margin: -2rem; }
+.builder-panel { background: hsla(0, 0%, 5%, 0.85); border-right: 1px solid var(--clr-gold); padding: 2rem; overflow-y: auto; z-index: 50; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+.preview-area { display: flex; gap: 2rem; padding: 3rem; background: radial-gradient(circle at 70% 30%, hsla(var(--h-wine), 30%, 15%, 0.4), transparent); overflow-x: auto; align-items: center; justify-content: center; }
+.card-area { flex: 0 0 400px; }
+.sheet-area { flex: 1; min-width: 800px; height: 90vh; }
+
+
+.builder-controls { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100; }
+.recommended-glow { border-color: var(--clr-gold) !important; box-shadow: 0 0 15px var(--clr-gold-glow); background: hsla(var(--h-gold), 30%, 20%, 0.3) !important; }
+.recommended-glow label { color: var(--clr-gold-light) !important; font-weight: bold; }
+.builder-hint { background: hsla(var(--h-wine), 30%, 10%, 0.9); border: 1px solid var(--clr-gold); padding: 10px; margin-top: 10px; font-size: 0.8rem; color: var(--clr-scroll); border-radius: 4px; animation: premiumFadeIn 0.3s ease; }
+
+
+.parchment-sheet { background-color: #f4ebd0; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png'); color: #2c1810; padding: 4rem; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 100px rgba(184, 155, 75, 0.2); font-family: 'Cinzel', serif; position: relative; border: 1px solid #d4c4a8; }
+.parchment-sheet h2, .parchment-sheet h3, .parchment-sheet label { color: #5e1f2d !important; }
+.parchment-sheet input, .parchment-sheet textarea { background: transparent !important; border: none !important; border-bottom: 2px solid rgba(94, 31, 45, 0.2) !important; color: #2c1810 !important; font-family: inherit; }
+
+
+.card-container { perspective: 1000px; width: 400px; height: 600px; }
+.hero-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.hero-card.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border: 2px solid var(--clr-gold); border-radius: 12px; background: #121212; overflow: hidden; box-shadow: var(--shadow-premium); }
+.card-back { transform: rotateY(180deg); background: radial-gradient(circle at 50% 50%, #1a1a1a, #0a0a0a); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+.hero-card:hover { box-shadow: 0 0 50px var(--clr-gold-glow); }
+.card-banner { height: 350px; background-size: cover; background-position: center; position: relative; border-bottom: 2px solid var(--clr-gold); }
+.card-level-badge { position: absolute; top: 1rem; right: 1rem; background: var(--clr-gold); color: var(--clr-wine); padding: 5px 12px; border-radius: 20px; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+.card-info { padding: 1.5rem; text-align: center; }
+.card-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1rem; }
+.status-bar-container { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 5px; }
+.status-bar-fill { height: 100%; transition: width 0.5s ease; }
+.xp-bar { background: var(--clr-gold); box-shadow: 0 0 10px var(--clr-gold-glow); }
+.hp-bar { background: #ff4444; box-shadow: 0 0 10px rgba(255,68,68,0.5); }
+.card-hint { margin-top: 15px; font-size: 0.7rem; color: var(--clr-gold); letter-spacing: 2px; opacity: 0.5; text-shadow: 0 0 5px var(--clr-gold-glow); animation: pulseHint 2s infinite ease-in-out; }
+@keyframes pulseHint { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
+

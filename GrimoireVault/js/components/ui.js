@@ -1,11 +1,8 @@
-/**
- * UI Controller
- * Orchestrating Views, Modals, and global interactions.
- */
-import { Dashboard } from './components/Dashboard.js';
-import { CharacterSheet } from './components/CharacterSheet.js';
-import { Codice } from './components/Codice.js';
-import { SRDViewer } from './components/SRDViewer.js';
+
+import { Dashboard } from './Dashboard.js';
+import { CharacterSheet } from './CharacterSheet.js';
+import { Codice } from './Codice.js';
+import { SRDViewer } from './SRDViewer.js';
 
 export const UI = {
     showView(viewId) {
@@ -47,13 +44,29 @@ export const UI = {
     },
 
     renderSheet(char) {
-        const content = document.getElementById('sheet-content');
-        content.innerHTML = CharacterSheet.render(char);
+        const view = document.getElementById('view-sheet');
+        if (!view) return;
+
+        if (!document.getElementById('builder-sidebar')) {
+            view.innerHTML = CharacterSheet.render(char);
+        }
+
+        const sidebar = document.getElementById('builder-sidebar');
+        const card = document.getElementById('hero-card-preview');
+        const sheet = document.getElementById('hero-sheet-preview');
+
+        if (sidebar) sidebar.innerHTML = CharacterSheet.renderCreator(char);
+        if (card) card.innerHTML = CharacterSheet.renderCard(char);
+        if (sheet) sheet.innerHTML = CharacterSheet.renderSheet(char);
     },
 
     renderCodice(mode) {
         const content = document.getElementById('codice-content');
-        content.innerHTML = Codice.render(mode);
+        if (content) {
+            content.innerHTML = Codice.render(mode);
+        } else {
+            console.warn("⚠ [UI] Elemento 'codice-content' não encontrado.");
+        }
     },
 
     renderSRD(data, category) {
@@ -71,3 +84,4 @@ export const UI = {
         `).join('');
     }
 };
+

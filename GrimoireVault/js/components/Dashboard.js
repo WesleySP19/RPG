@@ -1,7 +1,4 @@
-/**
- * Dashboard Component
- * Managing Heroes and Active Sessions.
- */
+
 export const Dashboard = {
     render(profile, sessions = {}) {
         return `
@@ -11,7 +8,7 @@ export const Dashboard = {
             </header>
 
             <div class="dashboard-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
-                <!-- Hero Panel -->
+                
                 <div class="panel glass-panel" style="padding:15px; min-height:300px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                         <h3>Sua Comitiva</h3>
@@ -26,7 +23,7 @@ export const Dashboard = {
                     <button class="grimoire-btn" style="width:100%; margin-top:1rem;" onclick="window.app.openSheet()">+ FORJAR NOVO HERÓI</button>
                 </div>
 
-                <!-- Session Panel -->
+                
                 <div class="panel glass-panel" style="padding:15px; min-height:300px;">
                     <h3>Mesas Ativas</h3>
                     <div id="active-sessions" class="list-container scroll-panel" style="max-height:200px; margin-top:1rem;"></div>
@@ -60,3 +57,4 @@ export const Dashboard = {
         `).join('');
     }
 };
+

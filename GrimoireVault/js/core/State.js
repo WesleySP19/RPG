@@ -1,7 +1,4 @@
-/**
- * Grimoire State Module
- * Reactive State Management using JavaScript Proxies.
- */
+
 export const State = {
     listeners: [],
 
@@ -25,3 +22,4 @@ export const State = {
         return new Proxy(initialState, handler);
     }
 };
+

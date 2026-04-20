@@ -1,7 +1,4 @@
-/**
- * Grimoire Network Module
- * Managing Real-time WebSocket synchronization.
- */
+
 export const Network = {
     socket: null,
     sessionKey: null,
@@ -52,3 +49,4 @@ export const Network = {
         this.send('sync', { type, ...data });
     }
 };
+

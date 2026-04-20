@@ -1,23 +1,17 @@
-/**
- * Grimoire Tactical Map Engine
- * 60fps Canvas-based VTT with Fog of War and Ruler.
- */
+
 export class TacticalMap {
     constructor(canvasId, initialState = [], onStateChange = null) {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
-        
-        // Configuration
+
         this.cellSize = 40;
         this.onStateChange = onStateChange;
 
-        // State
         this.tokens = initialState;
         this.transform = { x: 0, y: 0, scale: 1 };
         this.fogOfWar = new Set();
-        
-        // Interaction
+
         this.isDragging = false;
         this.isPanning = false;
         this.isMeasuring = false;
@@ -123,20 +117,17 @@ export class TacticalMap {
         ctx.translate(transform.x, transform.y);
         ctx.scale(transform.scale, transform.scale);
 
-        // Grid
-        ctx.strokeStyle = 'rgba(184, 155, 75, 0.1)';
+        ctx.strokeStyle = 'hsla(var(--h-gold), 45%, 51%, 0.15)';
         ctx.lineWidth = 1/transform.scale;
         ctx.beginPath();
         for(let x=-2000; x<2000; x+=cellSize) { ctx.moveTo(x,-2000); ctx.lineTo(x,2000); }
         for(let y=-2000; y<2000; y+=cellSize) { ctx.moveTo(-2000,y); ctx.lineTo(2000,y); }
         ctx.stroke();
 
-        // Dynamic Token Fog of War
         ctx.fillStyle = 'rgba(0,0,0,0.95)';
         ctx.fillRect(-2000, -2000, 4000, 4000);
         ctx.globalCompositeOperation = 'destination-out';
-        
-        // Use tokens to punch holes in the darkness (Light Radius = 30ft = 6 cells)
+
         this.tokens.forEach(t => {
             const centerX = t.x + cellSize / 2;
             const centerY = t.y + cellSize / 2;
@@ -155,19 +146,30 @@ export class TacticalMap {
         
         ctx.globalCompositeOperation = 'source-over';
 
-        // Tokens
         this.tokens.forEach(t => {
-            ctx.fillStyle = t.color || '#B89B4B';
-            ctx.beginPath();
-            ctx.arc(t.x + cellSize/2, t.y + cellSize/2, cellSize * 0.4, 0, Math.PI*2);
-            ctx.fill();
-            ctx.strokeStyle = 'white'; ctx.lineWidth = 2/transform.scale; ctx.stroke();
+            const centerX = t.x + cellSize / 2;
+            const centerY = t.y + cellSize / 2;
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = t.color || 'var(--clr-gold)';
             
-            ctx.fillStyle = 'white'; ctx.font = `${12/transform.scale}px Cinzel`; ctx.textAlign = 'center';
-            ctx.fillText(t.name.substring(0,10), t.x + cellSize/2, t.y + cellSize * 1.2);
+            ctx.fillStyle = t.color || 'var(--clr-gold)';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, cellSize * 0.4, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.shadowBlur = 0; // Reset
+            
+            ctx.strokeStyle = 'white'; 
+            ctx.lineWidth = 2/transform.scale; 
+            ctx.stroke();
+            
+            ctx.fillStyle = 'white'; 
+            ctx.font = `${12/transform.scale}px var(--font-heading)`; 
+            ctx.textAlign = 'center';
+            ctx.fillText(t.name.substring(0,12), centerX, t.y + cellSize * 1.3);
         });
 
-        // Ruler
         if (this.isMeasuring && this.measureStart && this.measureEnd) {
             ctx.strokeStyle = '#2ecc71';
             ctx.lineWidth = 3/transform.scale;
@@ -183,3 +185,4 @@ export class TacticalMap {
         }
     }
 }
+

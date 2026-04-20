@@ -1,7 +1,4 @@
-/**
- * SRDViewer Component
- * Navigator for the Arcane Compendium (Rules, Items, Spells).
- */
+
 export const SRDViewer = {
     render(data, category = 'items') {
         const list = data[category] || [];
@@ -31,3 +28,4 @@ export const SRDViewer = {
         `;
     }
 };
+

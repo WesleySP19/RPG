@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+    
+    --h-gold: 45;
+    --h-wine: 347;
+    
+    --clr-gold: hsl(var(--h-gold), 45%, 51%);
+    --clr-gold-light: hsl(var(--h-gold), 70%, 70%);
+    --clr-gold-glow: hsla(var(--h-gold), 45%, 51%, 0.3);
+    
+    --clr-wine: hsl(var(--h-wine), 50%, 25%);
+    --clr-wine-light: hsl(var(--h-wine), 50%, 35%);
+    
+    --clr-bg: hsl(0, 0%, 4%);
+    --clr-scroll: hsl(45, 45%, 90%);
+    --clr-scroll-dim: hsl(45, 20%, 75%);
+    
+    --font-heading: 'Cinzel', serif;
+    --font-body: 'Lato', sans-serif;
+    
+    --shadow-premium: 0 15px 50px rgba(0,0,0,0.9), 0 0 20px var(--clr-gold-glow);
+    --glass: hsla(0, 0%, 100%, 0.03);
+    --glass-heavy: hsla(0, 0%, 0%, 0.6);
+    --glass-border: hsla(var(--h-gold), 45%, 51%, 0.15);
+    
+    --transition-arcane: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--clr-bg);
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(94, 31, 45, 0.15) 0%, transparent 70%),
+        url('https://www.transparenttextures.com/patterns/dark-matter.png');
+    color: var(--clr-scroll);
+    font-family: var(--font-body);
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--clr-gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.ornament {
+    font-size: 2.5rem;
+    color: var(--clr-gold);
+    text-shadow: 0 0 10px rgba(184, 155, 75, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.ornament-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--clr-gold), transparent);
+    margin: 1.5rem 0;
+}
+

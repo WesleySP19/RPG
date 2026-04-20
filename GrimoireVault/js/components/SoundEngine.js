@@ -1,13 +1,9 @@
-/**
- * SoundEngine Module
- * Handles background music (BGM) and sound effects (SFX).
- */
+
 export const SoundEngine = {
     audioContext: null,
     currentTrack: null,
     bgmElement: null,
 
-    // Pre-defined soundtrack links (Royalty-free placeholders or absolute URLs)
     tracks: {
         'tavern': 'https://cdn.pixabay.com/download/audio/2022/02/10/audio_55a2aa982c.mp3', // Medieval Tavern
         'combat': 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_03e05a5a67.mp3',   // Battle theme
@@ -42,7 +38,7 @@ export const SoundEngine = {
     },
 
     playSFX(type) {
-        // Simple SFX synthesis using Web Audio API to avoid network lag
+
         if (!this.audioContext) {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
@@ -55,7 +51,7 @@ export const SoundEngine = {
         gainNode.connect(ctx.destination);
 
         if (type === 'dice') {
-            // Short high pitch clack
+
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(800, ctx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
@@ -64,7 +60,7 @@ export const SoundEngine = {
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.1);
         } else if (type === 'sword') {
-            // Swish sound
+
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(400, ctx.currentTime);
             osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.2);
@@ -75,3 +71,4 @@ export const SoundEngine = {
         }
     }
 };
+

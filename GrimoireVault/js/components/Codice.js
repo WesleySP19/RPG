@@ -1,7 +1,4 @@
-/**
- * Codice Component
- * Trimodal Rulebook (Player, Master, Session).
- */
+
 export const Codice = {
     render(mode = 'player') {
         const sections = mode === 'player' ? this.playerSections : 
@@ -52,3 +49,4 @@ export const Codice = {
         { title: "II. Sistema", items: [{ label: "CD", text: "Ritmo de 2 rodadas máx." }] }
     ]
 };
+

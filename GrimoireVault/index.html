@@ -4,11 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grimoire Vault - D&D 5e Manager</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/theme.css">
+    <link rel="stylesheet" href="./css/layout.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/character-sheet.css">
+    <link rel="stylesheet" href="./css/live-session.css">
 </head>
 <body>
+    <div id="splash-screen" class="splash-overlay">
+        <div class="splash-content">
+            <div class="runes-container">
+                <svg viewBox="0 0 100 100" class="rune-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--clr-gold)" stroke-width="0.5" stroke-dasharray="2 2" />
+                    <path d="M50 5 L55 45 L95 50 L55 55 L50 95 L45 55 L5 50 L45 45 Z" fill="none" stroke="var(--clr-gold)" stroke-width="1">
+                        <animate attributeName="stroke-dashoffset" from="400" to="0" dur="3s" repeatCount="indefinite" />
+                    </path>
+                </svg>
+            </div>
+            <h2 class="loading-text">Despertando o Grimório...</h2>
+        </div>
+    </div>
+
     <div id="vault-app">
-        <!-- Persistent Action Center (Sidebar Left) -->
         <aside id="action-center" class="sidebar side-left glass-panel">
             <header class="sidebar-header">
                 <h3>Diário da Mesa</h3>
@@ -20,78 +37,122 @@
             </div>
         </aside>
 
-        <!-- Main Stage (Center) -->
         <main id="main-stage">
             <div id="view-port">
-                <!-- VISTA: LOGIN -->
                 <section id="view-login" class="view-container active">
-                    <div class="login-box glass-panel">
-                        <h1 class="ornament">Grimoire Vault</h1>
-                        <p style="opacity:0.6; margin-bottom: 2rem;">Entre no Cofre Arcano para sua jornada...</p>
-                        
-                        <div class="input-group">
-                            <label>Identificador de Alma</label>
-                            <input type="password" id="identificador" class="grimoire-input" placeholder="Sua Mensagem Secreta...">
+                    <div class="login-box glass-panel" style="width: 400px; margin: 0 auto; margin-top: 10vh;">
+                        <h1 class="ornament" style="text-align: center;">Grimoire Vault</h1>
+                        <div style="display: flex; gap: 10px; margin-top: 20px; border-bottom: 1px solid var(--clr-gold);">
+                            <button id="tab-login" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: rgba(184, 155, 75, 0.2);">Entrar</button>
+                            <button id="tab-register" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: transparent;">Criar Alma</button>
                         </div>
-                        
-                        <button id="btn-login" class="grimoire-btn" style="width:100%; margin-top:1rem;">Forjar Chave</button>
-                        
-                        <div id="key-display" style="display:none; margin-top:1.5rem; text-align:center;">
-                            <div class="key-box" id="access-key-output">XXXX-XXXX-XXXX</div>
-                            <button id="btn-copy-key" class="grimoire-btn-icon" style="margin-top:0.5rem;">📜 Copiar Chave</button>
-                            <button id="btn-enter" class="grimoire-btn" style="width:100%; margin-top:1rem;">ENTRAR NO COFRE</button>
+                        <div id="form-login" style="padding-top: 20px;">
+                            <p style="opacity:0.6; margin-bottom: 1.5rem; text-align: center;">Acesse o Cofre Arcano</p>
+                            <div class="input-group">
+                                <label>Email ou Celular</label>
+                                <input type="text" id="auth-login-id" class="grimoire-input" placeholder="seu@email.com">
+                            </div>
+                            <button id="btn-auth-login" class="grimoire-btn" style="width:100%; margin-top:1rem;">ACESSAR MUNDO</button>
+                        </div>
+                        <div id="form-register" style="padding-top: 20px; display: none;">
+                            <p style="opacity:0.6; margin-bottom: 1.5rem; text-align: center;">Forje seu destino</p>
+                            <div class="input-group">
+                                <label>Seu Nome (UserTag)</label>
+                                <input type="text" id="auth-reg-tag" class="grimoire-input" placeholder="Ex: Hawnk">
+                            </div>
+                            <div class="input-group" style="margin-top: 10px;">
+                                <label>Email ou Celular</label>
+                                <input type="text" id="auth-reg-id" class="grimoire-input" placeholder="Para recuperar acesso depois">
+                            </div>
+                            <button id="btn-auth-register" class="grimoire-btn" style="width:100%; margin-top:1rem;">CRIAR IDENTIDADE</button>
+                        </div>
+                        <div id="auth-error-msg" style="color: #ff4444; text-align: center; margin-top: 15px; font-size: 0.8rem; display: none;">Erro genérico</div>
+                    </div>
+                </section>
+
+                <section id="view-dashboard" class="view-container"></section>
+
+                <section id="view-sheet" class="view-container">
+                    <div class="builder-layout">
+                        <aside id="builder-sidebar" class="glass-panel builder-panel builder-sidebar"></aside>
+                        <div id="builder-preview" class="preview-area">
+                            <div class="card-area">
+                                <div id="hero-card-preview"></div>
+                                <div class="card-hint">CLIQUE NO CARD PARA GIRAR</div>
+                            </div>
+                            <div class="sheet-area scroll-panel">
+                                <div id="hero-sheet-preview"></div>
+                            </div>
+                        </div>
+                        <div class="builder-controls">
+                            <button id="btn-back-dashboard" class="grimoire-btn-icon" title="Voltar ao Dashboard">🔙</button>
+                            <button id="btn-save-character" class="grimoire-btn ornament" style="padding: 0 2rem;">💾 SALVAR NO GRIMÓRIO</button>
                         </div>
                     </div>
                 </section>
 
-                <!-- VISTA: DASHBOARD -->
-                <section id="view-dashboard" class="view-container">
-                    <!-- Dashboard content dynamically injected -->
-                </section>
+                <section id="view-session" class="view-container session-layout">
+                    <div class="session-main">
+                        <header class="session-header glass-panel">
+                            <div style="display:flex; gap:1rem; align-items:center;">
+                                <button id="btn-leave-session" class="grimoire-btn-icon" title="Sair da Sessão">🏃</button>
+                                <div>
+                                    <h2 id="session-title" style="margin:0; font-size:1.1rem;">Crônicas do Dragão Partido</h2>
+                                    <small id="session-id" style="opacity:0.6; font-size:0.6rem;">ID: SESS-001-ALPHA</small>
+                                </div>
+                            </div>
+                            <div class="session-status-badge">
+                                <span class="pulse-dot"></span> <span id="current-state-label">EXPLORAÇÃO</span>
+                            </div>
+                        </header>
+                        <div id="session-log" class="session-log scroll-panel"></div>
+                        <footer class="session-footer glass-panel">
+                            <div class="input-wrapper">
+                                <span class="input-prefix">➜</span>
+                                <input type="text" id="action-input" placeholder="O que você faz? (Ex: 'Observo os encapuzados')" autocomplete="off">
+                                <button id="btn-send-action" class="grimoire-btn-icon">⚡</button>
+                            </div>
+                        </footer>
+                    </div>
 
-                <!-- VISTA: FICHA -->
-                <section id="view-sheet" class="view-container">
-                    <header class="view-header" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="display:flex; gap:1rem; align-items:center;">
-                            <button id="btn-back-dashboard" class="grimoire-btn-icon">🔙</button>
-                            <h2>Pergaminho</h2>
+                    <aside class="session-sidebar-pro glass-panel">
+                        <div class="sidebar-section">
+                            <h3 class="ornament" style="font-size:0.8rem;">INICIATIVA</h3>
+                            <div id="initiative-list" class="initiative-list">
+                                <div class="init-item active">
+                                    <span class="init-portrait" style="background-image:url('https://i.pinimg.com/736x/8d/f6/8d/8df68dcd2f33e5acc937e0086d061765.jpg')"></span>
+                                    <span class="init-name">Hawnk (Você)</span>
+                                </div>
+                            </div>
                         </div>
-                    </header>
-                    <div id="sheet-content"></div>
-                </section>
-
-                <!-- VISTA: SESSÃO -->
-                <section id="view-session" class="view-container">
-                    <header class="view-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-                        <div style="display:flex; gap:1rem; align-items:center;">
-                            <button id="btn-leave-session" class="grimoire-btn-icon">🏃</button>
-                            <h2 id="session-title">Aventura Ativa</h2>
+                        <div class="sidebar-section">
+                            <h3 class="ornament" style="font-size:0.8rem;">ARREDORES</h3>
+                            <ul id="nearby-actors" class="nearby-list">
+                                <li>👤 Bruenor (Taberneiro)</li>
+                                <li class="hostile">👤 Encapuzado A</li>
+                                <li class="hostile">👤 Encapuzado B</li>
+                            </ul>
                         </div>
-                        <div class="header-actions" style="display:flex; gap:0.5rem;">
-                            <button id="btn-open-map" class="grimoire-btn-icon" title="Mapa">🗺️</button>
-                            <button id="btn-open-srd" class="grimoire-btn-icon" title="Compêndio">📚</button>
+                        <div class="sidebar-footer-stats">
+                            <div class="mini-stat">❤️ <span id="mini-hp">12/12</span></div>
+                            <div class="mini-stat">🛡️ <span id="mini-ac">16</span></div>
                         </div>
-                    </header>
-                    <div id="session-content"></div>
+                    </aside>
                 </section>
             </div>
         </main>
 
-        <!-- Persistent Códice (Sidebar Right) -->
         <aside id="codice-center" class="sidebar side-right glass-panel">
             <header class="sidebar-header">
                 <h3>Códice do Aventureiro</h3>
             </header>
-            <div id="codice-content" class="scroll-panel">
-                <!-- Conduct Guidelines -->
-            </div>
+            <div id="codice-content" class="scroll-panel"></div>
             <div class="sidebar-footer">
                 <small> Grimório Conectado</small>
             </div>
         </aside>
     </div>
 
-    <!-- MODAL -->
     <div id="modal-overlay" class="modal-overlay">
         <div class="modal-content glass-panel">
             <button class="modal-close" onclick="document.getElementById('modal-overlay').style.display='none'">×</button>
@@ -99,7 +160,14 @@
         </div>
     </div>
 
-    <!-- Grimoire App Orchestration (ES Modules) -->
+    <div id="dice-hud" class="dice-overlay">
+        <div id="dice-result-container">
+            <div id="dice-value">20</div>
+            <div id="dice-label">CRÍTICO!</div>
+        </div>
+    </div>
+
     <script type="module" src="./js/app.js"></script>
 </body>
 </html>
+
