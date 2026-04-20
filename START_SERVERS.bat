@@ -7,10 +7,15 @@ echo     INICIANDO O SISTEMA PSI-RPG (BACKEND + FRONTEND)
 echo ===================================================
 echo.
 
+:: Configuração Local do Ambiente Java (Para evitar erro de JAVA_HOME)
+echo [0] Configurando Vínculos Arcanos (Java)...
+set "JAVA_HOME=C:\Program Files\Java\jdk-20"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+
 echo [1] Iniciando o Mestre (Spring Boot Backend - Porta 8080)
 echo Isso abrira uma janela preta rodando o Maven. NAO FECHE ELA!
 start "Backend (Spring)" cmd /c "cd backend-spring && title Backend Spring Boot && mvn spring-boot:run"
-timeout /t 3 /nobreak >nul
+timeout /t 5 /nobreak >nul
 
 echo.
 echo [2] Iniciando o Cofre (Frontend JS/HTML - Porta 8020)
@@ -26,7 +31,7 @@ if %errorlevel% == 0 (
 
 echo.
 echo Tudo iniciado! Aguardando modulos subirem...
-timeout /t 4 /nobreak >nul
+timeout /t 5 /nobreak >nul
 start http://localhost:8020
 
 echo Pressione qualquer tecla para finalizar este instalador
