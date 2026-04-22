@@ -39,6 +39,17 @@ O Grimoire Vault utiliza uma arquitetura moderna de **Servidor de Autoridade**:
 
 Siga estas instruções para despertar o seu próprio Grimoire Vault localmente.
 
+### ⚡ Instalação Automática (Recomendado)
+Para sua conveniência, existe um script que faz todo o trabalho pesado:
+1. Execute o arquivo **`SETUP_AND_INSTALL.bat`** na raiz do projeto.
+2. Ele verificará os requisitos, instalará as dependências do Frontend e preparará o Backend.
+3. Após terminar, use o **`START_SERVERS.bat`** para rodar tudo de uma vez.
+
+---
+
+### 🛠️ Instalação Manual (Alternativo)
+Se preferir fazer manualmente, siga os passos abaixo:
+
 ### 1. Pré-requisitos
 *   **Java JDK 17** ou superior instalado.
 *   **Node.js** (v18+) instalado.
