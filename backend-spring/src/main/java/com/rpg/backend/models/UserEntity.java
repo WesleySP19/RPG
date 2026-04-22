@@ -24,6 +24,9 @@ public class UserEntity {
     @Column(name = "user_tag", nullable = false)
     private String userTag; 
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

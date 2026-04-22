@@ -1,8 +1,8 @@
-
 import { Dashboard } from './Dashboard.js';
 import { CharacterSheet } from './CharacterSheet.js';
 import { Codice } from './Codice.js';
 import { SRDViewer } from './SRDViewer.js';
+import { DMDashboard } from './DMDashboard.js';
 
 export const UI = {
     showView(viewId) {
@@ -82,6 +82,13 @@ export const UI = {
                 <div style="font-size:11px; line-height:1.4;">${l.message}</div>
             </div>
         `).join('');
+    },
+
+    renderDMDashboard(session, players) {
+        const container = document.getElementById('dm-control-panel');
+        if (container) {
+            container.innerHTML = DMDashboard.render(session, players);
+        }
     }
 };
 

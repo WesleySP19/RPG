@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="./css/components.css">
     <link rel="stylesheet" href="./css/character-sheet.css">
     <link rel="stylesheet" href="./css/live-session.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
     <div id="splash-screen" class="splash-overlay">
@@ -33,18 +35,18 @@
             <div id="diary-logs" class="scroll-panel"></div>
             <div class="sidebar-footer">
                 <input type="text" id="diary-input" class="grimoire-input" placeholder="[AÇÃO] + [INTENÇÃO]...">
-                <button id="btn-add-note" class="grimoire-btn">Gritar</button>
+                <button id="btn-add-note" class="grimoire-btn" aria-label="Adicionar nota ao diário">Gritar</button>
             </div>
         </aside>
 
         <main id="main-stage">
             <div id="view-port">
-                <section id="view-login" class="view-container active">
+                <section id="view-login" class="view-container active" aria-labelledby="login-title">
                     <div class="login-box glass-panel" style="width: 400px; margin: 0 auto; margin-top: 10vh;">
-                        <h1 class="ornament" style="text-align: center;">Grimoire Vault</h1>
+                        <h1 id="login-title" class="ornament" style="text-align: center;">Grimoire Vault</h1>
                         <div style="display: flex; gap: 10px; margin-top: 20px; border-bottom: 1px solid var(--clr-gold);">
-                            <button id="tab-login" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: rgba(184, 155, 75, 0.2);">Entrar</button>
-                            <button id="tab-register" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: transparent;">Criar Alma</button>
+                            <button id="tab-login" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: rgba(184, 155, 75, 0.2);" aria-controls="form-login">Entrar</button>
+                            <button id="tab-register" class="grimoire-btn" style="flex: 1; border-bottom: none; border-radius: 4px 4px 0 0; background: transparent;" aria-controls="form-register">Criar Alma</button>
                         </div>
                         <div id="form-login" style="padding-top: 20px;">
                             <p style="opacity:0.6; margin-bottom: 1.5rem; text-align: center;">Acesse o Cofre Arcano</p>
@@ -100,6 +102,7 @@
                                     <h2 id="session-title" style="margin:0; font-size:1.1rem;">Crônicas do Dragão Partido</h2>
                                     <small id="session-id" style="opacity:0.6; font-size:0.6rem;">ID: SESS-001-ALPHA</small>
                                 </div>
+                                <button id="btn-open-dm-panel" class="grimoire-btn" style="font-size:10px; padding:5px 10px; display:none;">👁️ PAINEL DO MESTRE</button>
                             </div>
                             <div class="session-status-badge">
                                 <span class="pulse-dot"></span> <span id="current-state-label">EXPLORAÇÃO</span>

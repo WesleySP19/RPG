@@ -1,23 +1,13 @@
 {
   "name": "grimoire-vault-vtt",
-  "version": "3.1.0",
-  "description": "D&D 5e Virtual Tabletop with Premium Aesthetics",
-  "main": "index.html",
+  "version": "3.2.0",
+  "type": "module",
   "scripts": {
-    "start": "npx http-server ./ -p 8020",
-    "dev": "npx http-server ./ -p 8020 -c-1",
-    "repair": "npm install"
+    "dev": "vite --port 8020",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "keywords": [
-    "rpg",
-    "vtt",
-    "dnd",
-    "5e",
-    "grimoire"
-  ],
-  "author": "Antigravity",
-  "license": "MIT",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "vite": "^4.0.0"
   }
 }

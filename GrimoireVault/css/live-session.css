@@ -59,3 +59,18 @@
 .critical-success { border-color: #E5C100 !important; box-shadow: 0 0 80px rgba(229, 193, 0, 0.5) !important; }
 .critical-failure { border-color: #ff4444 !important; box-shadow: 0 0 80px rgba(255, 68, 68, 0.5) !important; }
 
+@media (max-width: 768px) {
+    .session-layout {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+    }
+    .session-main {
+        height: 500px;
+    }
+    .session-sidebar-pro {
+        width: 100%;
+        order: -1;
+    }
+}
+

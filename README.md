@@ -1,87 +1,92 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Versão-3.0.3-blueviolet?style=for-the-badge" alt="Versão 3.0.3">
-  <img src="https://img.shields.io/badge/Status-Produção-success?style=for-the-badge" alt="Status Produção">
-  <img src="https://img.shields.io/badge/Engine-Vanilla%20JS-yellow?style=for-the-badge" alt="Vanilla JS">
-  <img src="https://img.shields.io/badge/Backend-Spring%20Boot-brightgreen?style=for-the-badge" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Versão-4.0.0--ULTRA-blueviolet?style=for-the-badge" alt="Versão 4.0.0">
+  <img src="https://img.shields.io/badge/Status-Beta--Realtime-orange?style=for-the-badge" alt="Status Beta">
+  <img src="https://img.shields.io/badge/Engine-Vite%20+%20Vanilla-646CFF?style=for-the-badge" alt="Vite JS">
+  <img src="https://img.shields.io/badge/Backend-Spring%20Boot%203-brightgreen?style=for-the-badge" alt="Spring Boot">
 </div>
 
-# 📜 Grimoire Vault VTT: Master Architect Edition
+<br>
 
-Bem-vindos ao futuro das suas aventuras de RPG. O **Grimoire Vault** evoluiu de um simples Cofre Arcano para uma infraestrutura completa de Virtual Tabletop (VTT), focada em imersão, performance extrema e facilidade de uso.
+# 📜 Grimoire Vault VTT: The RPG Renaissance
+> **"Eleve sua mesa de RPG ao nível épico com performance extrema e imersão absoluta."**
 
-Esta versão **3.0.3** marca a transição definitiva para uma arquitetura profissional, abandonando dependências externas pesadas em favor de um **Servidor de Autoridade (Mestre)** robusto e um **Frontend Pure Vanilla** ultra-veloz.
-
----
-
-## 🏛️ Nova Arquitetura: O Equilíbrio entre Poder e Leveza
-
-Diferente de outros VTTs que exigem máquinas potentes ou configurações complexas, o Grimoire Vault foi reimaginado com uma modularidade estratégica:
-
-*   **⚡ Frontend (O Cofre):** Construído 100% em Vanilla JavaScript, HTML5 e CSS3. Sem frameworks pesados (React/Angular/Vue), garantindo que os dados rolem a 60fps mesmo em máquinas modestas.
-*   **🛡️ Backend (O Mestre):** Um servidor de autoridade robusto construído em **Spring Boot (Java 17)**. Ele gerencia a persistência de personagens, sincronização de sessões e segurança dos dados.
-*   **💾 Database:** Utiliza **H2 Database** (para portabilidade e testagem rápida) integrado via **Spring Data JPA**.
+O **Grimoire Vault** é um Virtual Tabletop (VTT) de nova geração focado em **D&D 5e**. Enquanto outros sistemas são pesados e complexos, o Grimoire foca na **estética premium**, **velocidade instantânea** e **facilidade de uso**. Desenvolvido para mestres que querem focar na narrativa, sem que a tecnologia atrapalhe o fluxo do jogo.
 
 ---
 
-## ⚔️ O Que Tem no Baú do Tesouro? (Features)
+## ⚔️ Por que o Grimoire Vault?
 
-*   🏰 **Persistência de Personagem Real:** Suas fichas não vivem mais apenas no navegador. Elas são salvas em um banco de dados centralizado via API REST, permitindo acesso de qualquer lugar.
-*   🎲 **D&D 5e "Loyal Pro":** Automação total de fichas de D&D 5e. Cálculos de modificadores, bônus de proficiência, salvaguardas e slots de magia automáticos.
-*   👁️ **Visão Tática Dinâmica:** Sistema de névoa de guerra e campo de visão em tempo real focado no seu Token. Se o seu personagem não vê, você também não vê.
-*   🎼 **Aura Sonora Sincronizada:** O Mestre controla a trilha sonora e ela toca instantaneamente para todos os jogadores, criando a atmosfera perfeita para cada encontro.
-*   ⚡ **Zero-Lag Interface:** Menus e janelas projetados para serem táteis e rápidos, com suporte a Drag & Drop para o Compêndio Arcano.
+*   🎭 **Estética Arcaica & Premium:** Uma interface inspirada em grimórios antigos, com efeitos de vidro (Glassmorphism), animações suaves e tipografia elegante.
+*   ⚡ **Sincronização em Tempo Real (STOMP):** Role dados, mova tokens e atualize HP instantaneamente para todos os jogadores via WebSockets.
+*   🛡️ **Segurança de Nível Industrial:** Autenticação via **JWT (JSON Web Tokens)** e senhas criptografadas. Seus personagens estão seguros no cofre.
+*   🎲 **Dashboard do Mestre:** Uma visão divina da mesa. Busque monstros no SRD, aplique dano e gerencie a iniciativa com um clique.
+*   🎼 **Aura Sonora:** Trilha sonora atmosférica controlada pelo mestre e sincronizada para toda a comitiva.
+*   📱 **Interface Responsiva:** Jogue ou gerencie sua ficha pelo tablet ou celular com um layout adaptativo.
 
 ---
 
-## 🚀 Como Iniciar a Jornada
+## 🏛️ Arquitetura do Sistema
 
-O sistema foi preparado para ser iniciado com um único feitiço (script).
+O Grimoire Vault utiliza uma arquitetura moderna de **Servidor de Autoridade**:
 
-### Pré-requisitos
-*   **Java JDK 17** ou superior.
-*   **Node.js** (opcional, para o servidor de arquivos do frontend) ou **Python**.
-*   **Maven** (integrado opcionalmente).
+1.  **O Grimório (Frontend):** Construído com **Vite** e **Vanilla JS**. Zero frameworks pesados. Apenas performance pura e CSS moderno.
+2.  **O Mestre (Backend):** Um motor **Spring Boot 3** robusto que gerencia a lógica, segurança e o banco de dados persistente.
+3.  **A Memória (Database):** **H2 Database** com persistência em disco e migrações automatizadas via **Flyway**.
 
-### Passo a Passo
-1.  **Clone o Repositório:**
+---
+
+## 🚀 Guia de Iniciação Rápida (Passo a Passo)
+
+Siga estas instruções para despertar o seu próprio Grimoire Vault localmente.
+
+### 1. Pré-requisitos
+*   **Java JDK 17** ou superior instalado.
+*   **Node.js** (v18+) instalado.
+*   **Maven** (opcional, mas recomendado).
+
+### 2. Configurando o Backend (O Cérebro)
+1.  Navegue até a pasta `backend-spring`.
+2.  Abra um terminal e execute:
     ```bash
-    git clone https://github.com/seu-usuario/RPG.git
-    cd RPG
+    ./mvnw spring-boot:run
     ```
-2.  **Invoque os Servidores:**
-    Execute o arquivo `START_SERVERS.bat` na raiz do projeto. Isso irá:
-    *   Iniciar o **Backend Spring Boot** na porta `8080`.
-    *   Iniciar o **Frontend** na porta `8020`.
-    *   Abrir seu navegador automaticamente em `localhost:8020`.
+    *O servidor iniciará em `http://localhost:8080`. Ele criará automaticamente o banco de dados e as tabelas na primeira execução.*
 
-3.  **Role os Dados!** 🎲
-
----
-
-## 🛠️ O Arsenal Tecnológico (Tech Stack)
-
-| Camada | Tecnologia |
-| :--- | :--- |
-| **Frontend** | Vanilla JS, CSS Variables, HTML5 Canvas, IndexedDB (Fallback) |
-| **Backend** | Java 17, Spring Boot 3.1.5, Spring Security, Maven |
-| **Persistência** | Hibernate / Spring Data JPA, H2 Database |
-| **Comunicação** | Protocólos RESTful, WebSockets (Sync) |
+### 3. Configurando o Frontend (O Rosto)
+1.  Navegue até a pasta `GrimoireVault`.
+2.  Instale as dependências do Vite:
+    ```bash
+    npm install
+    ```
+3.  Inicie o servidor de desenvolvimento:
+    ```bash
+    npm run dev
+    ```
+    *Acesse `http://localhost:8020` no seu navegador.*
 
 ---
 
-## 🤝 Contribua com o Feitiço
+## 🤝 Forje o Futuro Conosco (Open Source)
 
-Este projeto é **Open Source** e aceita sugestões de melhorias, novos sistemas (Pathfinder, Tormenta20) ou correções de bugs.
+O Grimoire Vault é um projeto **Open Source** e a sua ajuda é o combustível da nossa magia! Acreditamos que a melhor ferramenta de RPG é aquela construída pela própria comunidade.
 
-1.  Dê um `Fork` no projeto.
-2.  Crie sua branch de feature (`git checkout -b feature/SuaMecanica`).
-3.  Faça o `Commit` (`git commit -m 'Mod: Adicionado Necromancia'`).
-4.  Abra um `Pull Request`.
+### Como você pode ajudar?
+*   ✨ **Sugira Features:** Tem uma ideia para uma nova mecânica ou efeito visual? Abra uma *Issue*!
+*   🐛 **Cace Bugs:** Encontrou um erro arcano? Relate para que possamos bani-lo.
+*   💻 **Code & Pull Requests:** Adicione suporte a novos sistemas (Pathfinder, Tormenta), melhore a UI ou otimize o código.
+*   📚 **Documentação:** Ajude a traduzir ou melhorar este guia.
+
+> **Regra de Ouro:** Não importa se você é um mago experiente do código ou um aprendiz nível 1. Toda contribuição é valiosa e bem-vinda!
 
 ---
+
+## 📜 Licença e Créditos
+
+*   **Desenvolvido por:** Antigravity & Grimoire Community.
+*   **Licença:** MIT - Use, modifique e distribua livremente.
+*   **Dados:** Regras baseadas no SRD de D&D 5e.
 
 <p align="center">
-  <i>"Não é apenas sobre os números na ficha, é sobre a história que contamos juntos."</i><br>
-  <b>Grimoire Vault Team</b> 🐉✨
+  <i>"O Grimoire não é apenas um software, é o portal para o seu próximo grande épico."</i><br>
+  <b>Role sua iniciativa e junte-se a nós!</b> 🐉✨
 </p>
-

@@ -82,3 +82,32 @@
     font-size: 2rem; cursor: pointer;
 }
 
+@media (max-width: 1024px) {
+    #vault-app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: 100vh;
+    }
+    .sidebar {
+        height: auto;
+        border: none;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    .side-right {
+        border-left: none;
+        border-top: 1px solid var(--glass-border);
+    }
+}
+
+@media (max-width: 768px) {
+    #view-port {
+        padding: 1rem;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}

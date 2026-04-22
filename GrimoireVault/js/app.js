@@ -305,6 +305,12 @@ const App = {
         const session = Storage.data.sessions[this.currentSessionKey];
         const isMaster = session.masterId === this.playerId;
         
+        const dmBtn = document.getElementById('btn-open-dm-panel');
+        if (dmBtn) {
+            dmBtn.style.display = isMaster ? 'block' : 'none';
+            dmBtn.onclick = () => this.openDMPanel();
+        }
+
         UI.renderSessionDiary(session.logs);
         
         let content = `<div class="panel glass-panel" style="text-align:center; padding:10px;">
@@ -629,8 +635,56 @@ const App = {
         });
     },
 
+    openDMPanel() {
+        const session = Storage.data.sessions[this.currentSessionKey];
+        // In a real scenario, we would fetch connected players from the backend
+        // For now, let's mock with current session characters
+        const players = Object.values(Storage.data.characters).filter(c => c.playerId !== this.playerId);
+        
+        UI.openModal('<div id="dm-control-panel"></div>');
+        UI.renderDMDashboard(session, players);
+        
+        // Ensure SRD is loaded for monster search
+        if (!this.srdData) this.showSRD('monsters');
+    },
+
     resetMapFog() { if(this.mapInstance) this.mapInstance.resetFog(); },
-    resetMapTokens() { if(this.mapInstance) this.mapInstance.resetTokens(); }
+    resetMapTokens() { if(this.mapInstance) this.mapInstance.resetTokens(); },
+
+    searchMonsters(query) {
+        if (!this.srdData || !query) return;
+        const results = this.srdData.monsters.filter(m => m.name.toLowerCase().includes(query.toLowerCase()));
+        const target = document.getElementById('monster-results');
+        if (target) {
+            target.innerHTML = results.map(m => `
+                <div class="list-item" style="font-size:11px; cursor:pointer;" onclick="window.app.spawnMonster('${m.name}')">
+                    <b>${m.name}</b> (CR ${m.cr}) - HP ${m.hp}
+                </div>
+            `).join('') || '<p style="font-size:10px; opacity:0.5;">Nenhuma criatura invocada...</p>';
+        }
+    },
+
+    spawnMonster(name) {
+        const monster = this.srdData.monsters.find(m => m.name === name);
+        if (!monster || !this.mapInstance) return;
+        
+        const token = {
+            id: 'monster-' + Date.now(),
+            name: monster.name,
+            x: 100, y: 100,
+            color: '#ff4444'
+        };
+        
+        this.mapInstance.tokens.push(token);
+        Network.broadcast('SYNC_MAP', { tokens: this.mapInstance.tokens });
+        alert(`${monster.name} invocado no mapa!`);
+    },
+
+    applyDamage(playerId, amount) {
+        Network.broadcast('SYNC_DAMAGE', { playerId, amount });
+        // Local feedback
+        console.log(`Damage applied: ${amount} to ${playerId}`);
+    }
 };
 
 window.app = App;
