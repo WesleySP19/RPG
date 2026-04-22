@@ -82,7 +82,7 @@ O Grimoire Vault é um projeto **Open Source** e a sua ajuda é o combustível d
 
 ## 📜 Licença e Créditos
 
-*   **Desenvolvido por:** Antigravity & Grimoire Community.
+*   **Desenvolvido por:** HawnkCorp..
 *   **Licença:** MIT - Use, modifique e distribua livremente.
 *   **Dados:** Regras baseadas no SRD de D&D 5e.
 
