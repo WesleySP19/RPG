@@ -3,8 +3,6 @@ import { CharacterLogic } from '../core/CharacterLogic.js';
 
 export const CharacterSheet = {
     render(char = {}) {
-
-
         return `
             <div class="builder-layout">
                 <aside id="builder-sidebar" class="builder-panel"></aside>
@@ -42,7 +40,6 @@ export const CharacterSheet = {
                 </div>
             </div>
 
-            
             <div class="glass-panel" style="margin-top:2rem; padding:15px; border-color:var(--clr-gold);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <label style="margin:0;">Atributos</label>
@@ -72,7 +69,6 @@ export const CharacterSheet = {
                 </div>
             </div>
 
-            
             <div id="builder-advice" class="builder-hint">
                 Selecione uma classe para ver as recomendações de atributos.
             </div>
@@ -93,7 +89,6 @@ export const CharacterSheet = {
         return `
             <div class="card-container" onclick="this.querySelector('.hero-card').classList.toggle('flipped')">
                 <div class="hero-card">
-                    
                     <div class="card-face card-front">
                         <div class="card-banner" style="background-image: url('${char.avatar || 'https://i.pinimg.com/736x/8d/f6/8d/8df68dcd2f33e5acc937e0086d061765.jpg'}')">
                             <div class="card-level-badge">LV ${level}</div>
@@ -120,7 +115,6 @@ export const CharacterSheet = {
                         </div>
                     </div>
 
-                    
                     <div class="card-face card-back">
                         <h3 class="ornament" style="font-size:1rem; color:var(--clr-gold) !important;">Inventário Arcano</h3>
                         <div class="ornament-divider"></div>
@@ -164,7 +158,6 @@ export const CharacterSheet = {
                 </header>
 
                 <div style="display:grid; grid-template-columns: 120px 1fr 1fr; gap:2rem;">
-                    
                     <div class="sheet-attributes">
                         ${['for', 'des', 'con', 'int', 'sab', 'car'].map(key => {
                             const val = char.attributes?.[key] || 10;
@@ -179,7 +172,6 @@ export const CharacterSheet = {
                         }).join('')}
                     </div>
 
-                    
                     <div>
                         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom: 1.5rem;">
                             <div style="background:#fff; border: 2px solid #d4c4a8; border-radius: 10px; padding: 15px; text-align: center;">
@@ -220,7 +212,6 @@ export const CharacterSheet = {
                         </div>
                     </div>
 
-                    
                     <div>
                         <div style="background:rgba(255,255,255,0.5); border: 2px solid #d4c4a8; border-radius: 10px; padding: 15px; margin-bottom: 1.5rem;">
                             <h3 class="ornament" style="font-size:0.9rem; margin-top:0;">INVENTÁRIO</h3>

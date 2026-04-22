@@ -158,7 +158,7 @@ export class TacticalMap {
             ctx.arc(centerX, centerY, cellSize * 0.4, 0, Math.PI*2);
             ctx.fill();
             
-            ctx.shadowBlur = 0; // Reset
+            ctx.shadowBlur = 0;
             
             ctx.strokeStyle = 'white'; 
             ctx.lineWidth = 2/transform.scale; 

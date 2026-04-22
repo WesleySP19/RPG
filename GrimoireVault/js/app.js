@@ -254,7 +254,7 @@ const App = {
         Network.connect(id, (msg) => this.handleNetworkEvent(msg));
 
         const allChars = Object.values(Storage.data.characters);
-        const char = allChars.find(c => c.playerId === this.playerId); // Demo: Load active character
+        const char = allChars.find(c => c.playerId === this.playerId);
         
         if (char) {
             await GameEngine.init(char);
@@ -562,7 +562,7 @@ const App = {
             inventory: [
                 { name: 'Espada Longa', weight: 3, type: 'martial' },
                 { name: 'Cota de Malha', weight: 55, type: 'heavy', ac: 16 }
-            ], // Initial starting gear for AAA demo
+            ],
             features: "Nenhuma característica especial registrada."
         };
 
@@ -637,14 +637,11 @@ const App = {
 
     openDMPanel() {
         const session = Storage.data.sessions[this.currentSessionKey];
-        // In a real scenario, we would fetch connected players from the backend
-        // For now, let's mock with current session characters
         const players = Object.values(Storage.data.characters).filter(c => c.playerId !== this.playerId);
         
         UI.openModal('<div id="dm-control-panel"></div>');
         UI.renderDMDashboard(session, players);
         
-        // Ensure SRD is loaded for monster search
         if (!this.srdData) this.showSRD('monsters');
     },
 
@@ -682,7 +679,6 @@ const App = {
 
     applyDamage(playerId, amount) {
         Network.broadcast('SYNC_DAMAGE', { playerId, amount });
-        // Local feedback
         console.log(`Damage applied: ${amount} to ${playerId}`);
     }
 };

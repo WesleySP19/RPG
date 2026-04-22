@@ -38,7 +38,6 @@ export const GameEngine = {
         });
     },
 
-    
     async generateIAResponse(player, action) {
         const d20 = Math.floor(Math.random() * 20) + 1;
         const mod = CharacterLogic.getModifier(player.attributes?.sab || 10);

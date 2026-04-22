@@ -17,7 +17,6 @@
 }
 .panel.full-width { grid-column: span 2; }
 
-
 .grimoire-btn {
     background: linear-gradient(135deg, var(--clr-wine) 0%, #3e141d 100%);
     color: var(--clr-gold); border: 1px solid var(--clr-gold);
@@ -48,7 +47,6 @@
     box-shadow: 0 0 15px var(--clr-gold-glow); transform: rotate(5deg);
 }
 
-
 .grimoire-input {
     background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
     padding: 0.8rem; font-family: var(--font-body); font-size: 1rem;
@@ -56,14 +54,12 @@
 }
 .grimoire-input:focus { border-color: var(--clr-gold); }
 
-
 .list-container { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 .list-item {
     background: rgba(0,0,0,0.2); border: 1px solid rgba(184, 155, 75, 0.1);
     padding: 1rem; display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
 }
 .list-item:hover { border-color: var(--clr-gold); background: rgba(184, 155, 75, 0.05); }
-
 
 .tabs-header { display: flex; gap: 1rem; border-bottom: 1px solid var(--glass-border); margin-bottom: 1.5rem; }
 .tab-btn {
@@ -73,7 +69,6 @@
 .tab-btn.active { opacity: 1; border-bottom: 2px solid var(--clr-gold); }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
-
 
 .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .status-dot.online { background: #4CAF50; box-shadow: 0 0 10px #4CAF50; }

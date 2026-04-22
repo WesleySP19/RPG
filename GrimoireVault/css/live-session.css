@@ -21,7 +21,6 @@
     background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--glass-border);
 }
 
-
 .game-packet { max-width: 85%; padding: 1.5rem; border-radius: 15px; animation: slideUp 0.4s ease-out; line-height: 1.6; }
 .packet-dm { align-self: flex-start; background: linear-gradient(135deg, hsla(var(--h-wine), 30%, 15%, 0.8), hsla(var(--h-wine), 30%, 10%, 0.8)); border-left: 4px solid var(--clr-gold); }
 .packet-player { align-self: flex-end; background: hsla(var(--h-gold), 20%, 30%, 0.2); border-right: 4px solid var(--clr-gold-glow); text-align: right; }
@@ -31,7 +30,6 @@
 .input-wrapper { display: flex; align-items: center; gap: 1rem; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 30px; border: 1px solid var(--glass-border); }
 .input-prefix { color: var(--clr-gold); font-weight: bold; }
 #action-input { flex: 1; background: transparent; border: none; color: var(--clr-scroll); padding: 10px 0; outline: none; font-size: 0.9rem; }
-
 
 .session-sidebar-pro { width: 280px; display: flex; flex-direction: column; gap: 2rem; padding: 1.5rem; border-radius: 12px; }
 .sidebar-section h3 { color: var(--clr-gold-light); margin-bottom: 1rem; letter-spacing: 1px; }
@@ -48,7 +46,6 @@
 .mini-stat { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: center; font-size: 0.8rem; border: 1px solid var(--glass-border); }
 
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
 
 .dice-overlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; pointer-events: none; display: none; }
 .dice-overlay.active { display: flex; justify-content: center; align-items: center; }

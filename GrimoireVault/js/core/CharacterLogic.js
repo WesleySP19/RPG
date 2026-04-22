@@ -18,7 +18,6 @@ export const CharacterLogic = {
         return level;
     },
 
-    
     calculateLevelStats(char) {
         const level = this.calculateLevel(char.xp || 0);
         const conScore = char.attributes?.con || 10;
@@ -31,11 +30,10 @@ export const CharacterLogic = {
         };
     },
 
-    
     rollAttribute() {
         const rolls = [1, 2, 3, 4].map(() => Math.floor(Math.random() * 6) + 1);
         rolls.sort((a, b) => a - b);
-        rolls.shift(); // Drop lowest
+        rolls.shift();
         return rolls.reduce((a, b) => a + b, 0);
     },
 
@@ -52,8 +50,6 @@ export const CharacterLogic = {
 
     calculateBaseHP(conScore, level, hitDie) {
         const mod = this.getModifier(conScore);
-
-
         return (hitDie + mod) + (level - 1) * (Math.floor(hitDie / 2) + 1 + mod);
     },
 
@@ -70,7 +66,6 @@ export const CharacterLogic = {
         return 10 + mod + prof;
     },
 
-    
     generateBackstory(char) {
         const classThemes = {
             'Barbaro': 'buscou nas terras selvagens a força bruta necessária para sobreviver.',

@@ -9,7 +9,6 @@ export const Storage = {
 
     async init() {
         return new Promise((resolve, reject) => {
-
             const request = indexedDB.open("GrimoireVaultDB", 6);
 
             request.onerror = () => reject("Erro ao abrir Grimório");
@@ -85,7 +84,7 @@ export const Storage = {
                 throw new Error(errorData.message || "Falha ao registrar Alma.");
             }
             
-            return await response.json(); // { playerId, userTag, token }
+            return await response.json();
         } catch(e) {
             console.error("API Auth Error", e);
             throw new Error(e.message === "Failed to fetch" ? "O Servidor Mestre encontra-se offline." : e.message);
@@ -105,7 +104,7 @@ export const Storage = {
                 throw new Error(errorData.message || "Falha ao autenticar Alma.");
             }
 
-            return await response.json(); // { playerId, userTag, token }
+            return await response.json();
         } catch(e) {
             console.error("API Auth Error", e);
             throw new Error(e.message === "Failed to fetch" ? "O Servidor Mestre encontra-se offline." : e.message);
@@ -160,7 +159,6 @@ export const Storage = {
             this.data.characters[savedChar.id] = savedChar;
             return savedChar.id;
         } catch(e) {
-
             if (!charData.id) charData.id = `char_${Date.now()}`;
             const tx = this.db.transaction("characters", "readwrite");
             tx.objectStore("characters").put(charData);

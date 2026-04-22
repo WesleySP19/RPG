@@ -41,24 +41,20 @@
 
 @media (max-width: 900px) { .sheet-pro { grid-template-columns: 1fr; } }
 
-
 .builder-layout { display: grid; grid-template-columns: 320px 1fr; grid-template-rows: 100vh; height: 100vh; margin: -2rem; }
 .builder-panel { background: hsla(0, 0%, 5%, 0.85); border-right: 1px solid var(--clr-gold); padding: 2rem; overflow-y: auto; z-index: 50; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
 .preview-area { display: flex; gap: 2rem; padding: 3rem; background: radial-gradient(circle at 70% 30%, hsla(var(--h-wine), 30%, 15%, 0.4), transparent); overflow-x: auto; align-items: center; justify-content: center; }
 .card-area { flex: 0 0 400px; }
 .sheet-area { flex: 1; min-width: 800px; height: 90vh; }
 
-
 .builder-controls { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100; }
 .recommended-glow { border-color: var(--clr-gold) !important; box-shadow: 0 0 15px var(--clr-gold-glow); background: hsla(var(--h-gold), 30%, 20%, 0.3) !important; }
 .recommended-glow label { color: var(--clr-gold-light) !important; font-weight: bold; }
 .builder-hint { background: hsla(var(--h-wine), 30%, 10%, 0.9); border: 1px solid var(--clr-gold); padding: 10px; margin-top: 10px; font-size: 0.8rem; color: var(--clr-scroll); border-radius: 4px; animation: premiumFadeIn 0.3s ease; }
 
-
 .parchment-sheet { background-color: #f4ebd0; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png'); color: #2c1810; padding: 4rem; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 100px rgba(184, 155, 75, 0.2); font-family: 'Cinzel', serif; position: relative; border: 1px solid #d4c4a8; }
 .parchment-sheet h2, .parchment-sheet h3, .parchment-sheet label { color: #5e1f2d !important; }
 .parchment-sheet input, .parchment-sheet textarea { background: transparent !important; border: none !important; border-bottom: 2px solid rgba(94, 31, 45, 0.2) !important; color: #2c1810 !important; font-family: inherit; }
-
 
 .card-container { perspective: 1000px; width: 400px; height: 600px; }
 .hero-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }

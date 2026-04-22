@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
 :root {
-    
     --h-gold: 45;
     --h-wine: 347;
     
@@ -43,7 +42,6 @@ body {
     height: 100vh;
     overflow: hidden;
 }
-
 
 h1, h2, h3 {
     font-family: var(--font-heading);
